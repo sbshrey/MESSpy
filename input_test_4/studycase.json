@@ -82,16 +82,7 @@
         "owned": true
     },
     
-    "large_energy_storage": { 
-        "capacity": 80000,
-        "max power": 20000,
-        "min SOC": 0.1,
-        "max SOC": 0.9,
-        "efficiency": 0.85,
-        "self discharge": 0.0005,
-        "priority": 7,
-        "owned": true
-    },
+
     
     "electrolyzer": { 
         "Npower": 25000,
@@ -109,18 +100,7 @@
         "priority": 8
     },
     
-    "fuel cell": { 
-        "Npower": 20000,
-        "number of modules": 200,
-        "stack model": "PEM General",
-        "electric efficiency": false,
-        "thermal efficiency": false,
-        "ageing": false,
-        "min power module": 0.1,
-        "operational_period": "01-01,31-12",
-        "state": "on",
-        "priority": 9
-    },
+
     
     "hydrogen_compressor": { 
         "P_out": 300,
@@ -141,20 +121,7 @@
         "priority": 16
     },
     
-    "steel_production": { 
-        "electricity demand": { 
-            "series": "steel_electric_load.csv",
-            "priority": 17 
-        },
-        "hydrogen demand": { 
-            "series": "steel_hydrogen_load.csv",
-            "priority": 18 
-        },
-        "heat demand": { 
-            "series": "steel_heat_load.csv",
-            "priority": 19 
-        }
-    },
+
     
     "ammonia_production": { 
         "electricity demand": { 

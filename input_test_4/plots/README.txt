@@ -26,8 +26,8 @@ GENERATED PLOTS:
    - Visual representation of energy flows in the hybrid plant
    - Component layout with color coding
    - Energy flow arrows showing system connectivity
-   - Wind → Battery → Electrolyzer → H2 Storage → Industrial Use
-   - Solar → Large Storage → Fuel Cell → Grid
+   - Wind → Battery → Electrolyzer → H2 Compressor → Grid/H2 Storage → Ammonia Production
+   - Solar → Battery → Electrolyzer → H2 Compressor → Grid/H2 Storage → Ammonia Production
    - File size: ~1-2 MB
 
 4. ECONOMIC_ANALYSIS.PNG

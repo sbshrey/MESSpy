@@ -15,38 +15,32 @@ RENEWABLE ENERGY TECHNOLOGIES:
   * Replacement: 80% of cost after 25 years
 
 ENERGY STORAGE SYSTEMS:
-- Battery Storage: 36,000 ₹/kW
-  * O&M: 900 ₹/kW/year
+- Battery Storage: 75,000 ₹/kW
+  * O&M: 1,500 ₹/kW/year
   * Replacement: 60% of cost after 20 years
 
-- Large Energy Storage: 27,000 ₹/kW
-  * O&M: 900 ₹/kW/year
-  * Replacement: 80% of cost after 30 years
+
 
 HYDROGEN TECHNOLOGIES:
 - Electrolyzer: 135,000 ₹/kW
   * O&M: 1,350 ₹/kW/year
   * Replacement: 30% of cost after 15 years
 
-- Fuel Cell: 225,000 ₹/kW
-  * O&M: 4,500 ₹/kW/year
-  * Replacement: 30% of cost after 15 years
 
-- Hydrogen Compressor: 67,500 ₹/kW
-  * O&M: 1,350 ₹/kW/year
+
+- Hydrogen Compressor: 35,000 ₹/kW
+  * O&M: 700 ₹/kW/year
   * Replacement: 30% of cost after 20 years
 
-- Hydrogen Storage: 20,250 ₹/kW
-  * O&M: 900 ₹/kW/year
+- Hydrogen Storage: 60,000 ₹/kW
+  * O&M: 1,200 ₹/kW/year
   * Replacement: 80% of cost after 30 years
 
 INDUSTRIAL PRODUCTION:
-- Steel Production: 225,000,000 ₹/unit
-  * O&M: 9,000 ₹/unit/year
-  * Replacement: 100% of cost after 40 years
 
-- Ammonia Production: 135,000,000 ₹/unit
-  * O&M: 9,000 ₹/unit/year
+
+- Ammonia Production: 25,000 ₹/kW
+  * O&M: 1,250 ₹/kW/year
   * Replacement: 100% of cost after 40 years
 
 COST ASSUMPTIONS:

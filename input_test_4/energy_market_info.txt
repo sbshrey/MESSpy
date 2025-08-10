@@ -20,7 +20,7 @@ OTHER ENERGY SOURCES:
 
 INCENTIVES AND SUBSIDIES:
 - Green Hydrogen Incentives: 1.50 ₹/kg for 10 years
-- Steel Production Incentives: 3.00 ₹/kg for 15 years
+
 - Ammonia Production Incentives: 5.00 ₹/kg for 15 years
 - REC (Renewable Energy Certificate): 15.00 ₹/kWh
 
@@ -31,7 +31,7 @@ ECONOMIC PARAMETERS:
   * Electricity: 4% per year
   * Gas: 5% per year
   * Hydrogen: 3% per year
-  * Steel: 2% per year
+
   * Ammonia: 2% per year
 
 EMISSION INTENSITY:

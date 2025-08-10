@@ -156,11 +156,7 @@ def create_load_profile_plots(loads_data):
         ax1.grid(True, alpha=0.3)
         ax1.legend()
         
-        # Add steel and ammonia specific loads
-        if 'steel_electric_load.csv' in loads_data:
-            ax1.plot(loads_data['steel_electric_load.csv']['timestamp'], 
-                    loads_data['steel_electric_load.csv']['steel_electricity_demand'], 
-                    'r--', linewidth=1.5, label='Steel Production')
+        # Add ammonia specific loads
         if 'ammonia_electric_load.csv' in loads_data:
             ax1.plot(loads_data['ammonia_electric_load.csv']['timestamp'], 
                     loads_data['ammonia_electric_load.csv']['ammonia_electricity_demand'], 
@@ -178,11 +174,7 @@ def create_load_profile_plots(loads_data):
         ax2.grid(True, alpha=0.3)
         ax2.legend()
         
-        # Add steel and ammonia specific heat loads
-        if 'steel_heat_load.csv' in loads_data:
-            ax2.plot(loads_data['steel_heat_load.csv']['timestamp'], 
-                    loads_data['steel_heat_load.csv']['steel_heat_demand'], 
-                    'r--', linewidth=1.5, label='Steel Production')
+        # Add ammonia specific heat loads
         if 'ammonia_heat_load.csv' in loads_data:
             ax2.plot(loads_data['ammonia_heat_load.csv']['timestamp'], 
                     loads_data['ammonia_heat_load.csv']['ammonia_heat_demand'], 
@@ -200,11 +192,7 @@ def create_load_profile_plots(loads_data):
         ax3.grid(True, alpha=0.3)
         ax3.legend()
         
-        # Add steel and ammonia specific hydrogen loads
-        if 'steel_hydrogen_load.csv' in loads_data:
-            ax3.plot(loads_data['steel_hydrogen_load.csv']['timestamp'], 
-                    loads_data['steel_hydrogen_load.csv']['steel_hydrogen_demand'], 
-                    'r--', linewidth=1.5, label='Steel Production')
+        # Add ammonia specific hydrogen loads
         if 'ammonia_hydrogen_load.csv' in loads_data:
             ax3.plot(loads_data['ammonia_hydrogen_load.csv']['timestamp'], 
                     loads_data['ammonia_hydrogen_load.csv']['ammonia_hydrogen_demand'], 
@@ -304,19 +292,16 @@ def create_energy_flow_diagram(studycase_config):
     
     fig, ax = plt.subplots(1, 1, figsize=(16, 12))
     
-    # Define component positions
+    # Define component positions - updated based on new flow requirements
     components = {
         'Wind': (2, 8),
         'Solar PV': (4, 8),
         'Battery': (3, 6),
-        'Large Storage': (5, 6),
-        'Electrolyzer': (2, 4),
-        'Fuel Cell': (4, 4),
-        'H2 Compressor': (6, 4),
-        'H2 Storage': (6, 2),
-        'Steel Production': (1, 0),
-        'Ammonia Production': (5, 0),
-        'Grid': (8, 4)
+        'Electrolyzer': (3, 4),
+        'H2 Compressor': (5, 4),
+        'H2 Storage': (5, 2),
+        'Ammonia Production': (3, 0),
+        'Grid': (7, 4)
     }
     
     # Draw components
@@ -324,13 +309,13 @@ def create_energy_flow_diagram(studycase_config):
         if name in ['Wind', 'Solar PV']:
             ax.add_patch(plt.Rectangle((pos[0]-0.4, pos[1]-0.3), 0.8, 0.6, 
                                      facecolor='lightblue', edgecolor='blue', linewidth=2))
-        elif name in ['Battery', 'Large Storage']:
+        elif name in ['Battery']:
             ax.add_patch(plt.Rectangle((pos[0]-0.4, pos[1]-0.3), 0.8, 0.6, 
                                      facecolor='lightgreen', edgecolor='green', linewidth=2))
-        elif name in ['Electrolyzer', 'Fuel Cell']:
+        elif name in ['Electrolyzer']:
             ax.add_patch(plt.Rectangle((pos[0]-0.4, pos[1]-0.3), 0.8, 0.6, 
                                      facecolor='lightyellow', edgecolor='orange', linewidth=2))
-        elif name in ['Steel Production', 'Ammonia Production']:
+        elif name in ['Ammonia Production']:
             ax.add_patch(plt.Rectangle((pos[0]-0.4, pos[1]-0.3), 0.8, 0.6, 
                                      facecolor='lightcoral', edgecolor='red', linewidth=2))
         else:
@@ -339,25 +324,22 @@ def create_energy_flow_diagram(studycase_config):
         
         ax.text(pos[0], pos[1], name, ha='center', va='center', fontweight='bold', fontsize=10)
     
-    # Draw energy flow arrows
+    # Draw energy flow arrows - updated based on new flow requirements
     arrows = [
         ((2, 7.7), (3, 6.3)),  # Wind to Battery
-        ((4, 7.7), (5, 6.3)),  # Solar to Large Storage
-        ((3, 5.7), (2, 4.3)),  # Battery to Electrolyzer
-        ((5, 5.7), (4, 4.3)),  # Large Storage to Fuel Cell
-        ((2, 3.7), (6, 4.3)),  # Electrolyzer to H2 Compressor
-        ((6, 3.7), (6, 2.3)),  # H2 Compressor to H2 Storage
-        ((6, 1.7), (1, 0.3)),  # H2 Storage to Steel
-        ((6, 1.7), (5, 0.3)),  # H2 Storage to Ammonia
-        ((4, 3.7), (8, 4.3)),  # Fuel Cell to Grid
-        ((8, 3.7), (4, 4.3)),  # Grid to Fuel Cell
+        ((4, 7.7), (3, 6.3)),  # Solar to Battery
+        ((3, 5.7), (3, 4.3)),  # Battery to Electrolyzer
+        ((3, 3.7), (5, 4.3)),  # Electrolyzer to H2 Compressor
+        ((5, 3.7), (7, 4.3)),  # H2 Compressor to Grid
+        ((5, 3.7), (5, 2.3)),  # H2 Compressor to H2 Storage
+        ((5, 1.7), (3, 0.3)),  # H2 Storage to Ammonia Production
     ]
     
     for start, end in arrows:
         ax.annotate('', xy=end, xytext=start,
                    arrowprops=dict(arrowstyle='->', lw=2, color='red'))
     
-    ax.set_xlim(0, 9)
+    ax.set_xlim(0, 8)
     ax.set_ylim(0, 9)
     ax.set_aspect('equal')
     ax.axis('off')
@@ -378,7 +360,9 @@ def create_economic_analysis_plots(tech_costs, energy_market):
     # Capital costs breakdown
     if tech_costs:
         ax1 = axes[0, 0]
-        tech_names = list(tech_costs.keys())
+        # Filter out removed components
+        removed_components = ['large_energy_storage', 'fuel_cell', 'steel_production']
+        tech_names = [tech for tech in tech_costs.keys() if tech not in removed_components]
         capital_costs = []
         valid_tech_names = []
         
@@ -408,7 +392,7 @@ def create_economic_analysis_plots(tech_costs, energy_market):
         om_costs = []
         om_tech_names = []
         
-        for tech in tech_names:
+        for tech in tech_names:  # tech_names is already filtered from above
             if 'OeM' in tech_costs[tech] and isinstance(tech_costs[tech]['OeM'], (int, float)):
                 om_costs.append(tech_costs[tech]['OeM'])
                 om_tech_names.append(tech)
@@ -482,9 +466,7 @@ def create_economic_analysis_plots(tech_costs, energy_market):
         if 'green_hydrogen_incentives' in energy_market and 'value' in energy_market['green_hydrogen_incentives']:
             incentives.append(energy_market['green_hydrogen_incentives']['value'])
             incentive_labels.append('Green Hydrogen\nIncentive')
-        if 'steel_incentives' in energy_market and 'value' in energy_market['steel_incentives']:
-            incentives.append(energy_market['steel_incentives']['value'])
-            incentive_labels.append('Steel Production\nIncentive')
+
         if 'ammonia_incentives' in energy_market and 'value' in energy_market['ammonia_incentives']:
             incentives.append(energy_market['ammonia_incentives']['value'])
             incentive_labels.append('Ammonia Production\nIncentive')
@@ -526,8 +508,14 @@ def create_system_summary_plot(studycase_config, tech_costs):
         labels = []
         
         # Extract capacities from studycase config - handle different capacity keys
+        # Filter out removed components
+        removed_components = ['large_energy_storage', 'fuel_cell', 'steel_production']
         hybrid_config = studycase_config['hybrid_plant']
         for component, config in hybrid_config.items():
+            # Skip removed components
+            if component in removed_components:
+                continue
+                
             if isinstance(config, dict):
                 capacity = None
                 if 'capacity' in config:
@@ -615,7 +603,6 @@ def simulate_hybrid_plant():
     loads_data = {}
     load_files = [
         "electric_load_hybrid.csv", "heat_load_hybrid.csv", "hydrogen_demand_hybrid.csv",
-        "steel_electric_load.csv", "steel_heat_load.csv", "steel_hydrogen_load.csv",
         "ammonia_electric_load.csv", "ammonia_heat_load.csv", "ammonia_hydrogen_load.csv"
     ]
     

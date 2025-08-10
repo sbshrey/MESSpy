@@ -29,10 +29,7 @@ ENERGY STORAGE SYSTEMS:
   * Efficiency: 90%
   * Self-discharge: 0.1% per hour
 
-- Large Energy Storage: 80 MWh / 20 MW
-  * State of charge range: 10-90%
-  * Efficiency: 85%
-  * Self-discharge: 0.05% per hour
+
 
 HYDROGEN INFRASTRUCTURE:
 - Electrolyzer: 25 MW (reduced from 80 MW)
@@ -41,10 +38,7 @@ HYDROGEN INFRASTRUCTURE:
   * Hydrogen-first strategy
   * Renewable-only operation
 
-- Fuel Cell: 20 MW (reduced from 60 MW)
-  * PEM technology
-  * 200 modules
-  * Backup power generation
+
 
 - Hydrogen Compressor: 30-300 bar
   * 3-stage compression
@@ -56,9 +50,7 @@ HYDROGEN INFRASTRUCTURE:
   * High-pressure storage
 
 INDUSTRIAL END-USES:
-- Steel Production: Integrated steel manufacturing
-  * Electricity, heat, and hydrogen demand profiles
-  * Priority: 17-19
+
 
 - Ammonia Production: Green ammonia synthesis
   * Electricity, heat, and hydrogen demand profiles
@@ -78,11 +70,9 @@ PRIORITY SYSTEM:
 4. Wind generation
 5. Solar generation
 6. Battery storage
-7. Large energy storage
-8. Electrolyzer
-9. Fuel cell
-10. Hydrogen compressor
-11-22. Grid connections and industrial processes
+7. Electrolyzer
+8. Hydrogen compressor
+9-16. Grid connections and industrial processes
 
 Note: Capacities have been adjusted to realistic Indian market scales while maintaining
 the hybrid plant concept and industrial integration capabilities.
