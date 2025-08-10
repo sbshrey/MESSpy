@@ -1,0 +1,71 @@
+{
+"PV": { 
+    "cost per unit": 1000, 
+    "OeM": 1, 
+    "refund": { "rate": 0, "years": 0},
+    "replacement": {"rate": 80, "years": 25}
+},
+
+"wind": { 
+    "cost per unit": 1200, 
+    "OeM": 3, 
+    "refund": { "rate": 0, "years": 0},
+    "replacement": {"rate": 80, "years": 25}
+}, 
+
+"battery": { 
+    "cost per unit": 800, 
+    "OeM": 1, 
+    "refund": { "rate": 0, "years": 0},
+    "replacement": {"rate": 60, "years": 20}
+}, 
+
+"large_energy_storage": { 
+    "cost per unit": 600, 
+    "OeM": 1, 
+    "refund": { "rate": 0, "years": 0},
+    "replacement": {"rate": 80, "years": 30}
+},
+
+"electrolyzer": {
+    "cost per unit": "default price correlation", 
+    "OeM": 1, 
+    "refund": { "rate": 0, "years": 0},
+    "replacement": {"rate": 30, "years": 15}
+},  
+
+"fuel cell": { 
+    "cost per unit": 3000,
+    "OeM": 2, 
+    "refund": { "rate": 0, "years": 0},
+    "replacement": {"rate": 30, "years": 15}
+},    
+
+"hydrogen_compressor": { 
+    "cost per unit": "default price correlation",
+    "OeM": 1,
+    "refund": { "rate": 0, "years": 0},
+    "replacement": {"rate": 30, "years": 20}
+},
+
+"hydrogen_storage": { 
+    "cost per unit": 450,
+    "OeM": 1,
+    "refund": { "rate": 0, "years": 0},
+    "replacement": {"rate": 80, "years": 30}
+},
+
+"steel_production": { 
+    "cost per unit": 5000000,
+    "OeM": 2,
+    "refund": { "rate": 0, "years": 0},
+    "replacement": {"rate": 100, "years": 40}
+},
+
+"ammonia_production": { 
+    "cost per unit": 3000000,
+    "OeM": 2,
+    "refund": { "rate": 0, "years": 0},
+    "replacement": {"rate": 100, "years": 40}
+}
+}

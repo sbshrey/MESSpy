@@ -1,0 +1,47 @@
+ENERGY MARKET CONFIGURATION - INPUT_TEST_4
+
+This file defines the energy market parameters, pricing structures, and incentive schemes
+for the Mixed End-Use Hybrid Plant simulation.
+
+MARKET PRICING STRUCTURE:
+
+ELECTRICITY MARKET:
+- Grid Purchase: 0.35 €/kWh (peak hours), 0.25 €/kWh (off-peak)
+- Grid Sale: 0.10 €/kWh (feed-in tariff)
+- Wind Electricity: 0.065 €/kWh (renewable energy certificate)
+- Solar Electricity: 0.065 €/kWh (renewable energy certificate)
+- Emission Intensity: 350 gCO2/kWh (grid electricity)
+
+HYDROGEN MARKET:
+- Purchase: 3.5 €/kg (external hydrogen supply)
+- Sale: 2.8 €/kg (hydrogen export to grid)
+- Green Hydrogen Incentives: 2.5 €/kg for 10 years
+
+OTHER ENERGY CARRIERS:
+- Oxygen: 0.15 €/kg (industrial oxygen market)
+- Water: 2.38 €/m³ (industrial water supply)
+- Natural Gas: 0.5 €/m³ (backup fuel supply)
+
+INCENTIVE SCHEMES:
+
+RENEWABLE ENERGY COMMUNITIES (REC):
+- Collective Self-Consumption: 0.118 €/kWh
+- Producer Share: 20%
+- Consumer Share: 80%
+- Manager Share: 0%
+
+INDUSTRIAL INCENTIVES:
+- Steel Production: 0.05 €/kWh for 15 years
+- Ammonia Production: 0.08 €/kWh for 15 years
+
+FINANCIAL PARAMETERS:
+- Interest Rate: 5% per annum
+- Investment Period: 30 years
+- Inflation Rates: Electricity (2%), Gas (3%), Hydrogen (2%), Steel (1%), Ammonia (1%)
+- Decommissioning Cost: 0 (assumed zero)
+
+MARKET ASSUMPTIONS:
+- Prices reflect European market conditions
+- Incentives support industrial decarbonization
+- REC scheme enables community energy sharing
+- Green hydrogen incentives accelerate market adoption

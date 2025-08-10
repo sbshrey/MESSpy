@@ -1,0 +1,50 @@
+STUDY CASE CONFIGURATION - INPUT_TEST_4
+
+This study case simulates a Mixed End-Use Hybrid Plant with the following key features:
+
+ENERGY GENERATION:
+- Wind Power: 150 MW capacity with power curve model
+- Solar PV: 120 MW peak capacity with optimal tilt and azimuth
+- Both technologies use TMY weather data for realistic generation profiles
+
+ENERGY STORAGE:
+- Battery Storage: 50 MWh capacity, 25 MW max power, 90% efficiency
+- Large-scale Storage: 200 MWh capacity, 50 MW max power, 85% efficiency
+- Both systems have appropriate SOC limits and self-discharge rates
+
+HYDROGEN INFRASTRUCTURE:
+- Electrolyzer: 80 MW PEM system with hydrogen-first strategy
+- Fuel Cell: 60 MW PEM system for electricity generation from stored hydrogen
+- Compressor: 3-stage mechanical compressor for hydrogen pressurization
+- Storage: 10,000 kg hydrogen storage capacity at 300 bar
+
+END-USE FACILITIES:
+- Steel Production: Integrated facility with electricity, heat, and hydrogen demands
+- Ammonia Production: Chemical facility with constant hydrogen demand and variable electricity/heat
+
+GRID INTEGRATION:
+- Electricity grid: Bidirectional connection for import/export
+- Gas grid: Import only for backup/auxiliary systems
+- Water grid: Import only for electrolysis and industrial processes
+- Hydrogen grid: Export only for external hydrogen supply
+- Oxygen grid: Export only for industrial oxygen supply
+
+PRIORITY SYSTEM:
+The system uses a sophisticated priority system to manage energy flows:
+1. Electricity demand (steel + ammonia)
+2. Heat demand (steel + ammonia)
+3. Hydrogen demand (steel + ammonia)
+4. Wind generation
+5. Solar PV generation
+6. Battery storage
+7. Large-scale storage
+8. Electrolyzer operation
+9. Fuel cell operation
+10. Hydrogen compression
+11. Grid electricity import/export
+12. Gas grid import
+13. Water grid import
+14. Hydrogen grid export
+15. Oxygen grid export
+16. Hydrogen storage
+17-22. Steel production specific demands

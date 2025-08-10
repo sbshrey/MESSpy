@@ -1,0 +1,174 @@
+{
+"hybrid_plant": { 
+    "electricity demand": { 
+        "series": "electric_load_hybrid.csv",
+        "priority": 1 
+    },
+    "heat demand": { 
+        "series": "heat_load_hybrid.csv",
+        "priority": 2 
+    },
+    "hydrogen demand": { 
+        "series": "hydrogen_demand_hybrid.csv",
+        "priority": 3,
+        "strategy": "demand-led" 
+    },
+    "electricity grid": { 
+        "draw": true,
+        "feed": true,
+        "priority": 11 
+    },
+    "gas grid": { 
+        "draw": true,
+        "feed": false,
+        "priority": 12 
+    },
+    "water grid": { 
+        "draw": true,
+        "feed": false,
+        "priority": 13 
+    },
+    "hydrogen grid": { 
+        "draw": false,
+        "feed": true,
+        "priority": 14 
+    },
+    "oxygen grid": { 
+        "draw": false,
+        "feed": true,
+        "priority": 15 
+    },
+    
+    "wind": { 
+        "model": "power curve",
+        "Npower": 150000,
+        "WScutin": 3.0,
+        "WSrated": 13.0,
+        "WScutoff": 25.0,
+        "z_i": 100,
+        "alpha": 0.4,
+        "area": 60,
+        "efficiency": 0.45,
+        "Nbands": 40,
+        "serie": "TMY",
+        "priority": 4,
+        "ageing": true,
+        "degradation factor": 1,
+        "owned": true
+    },
+    
+    "PV": { 
+        "peakP": 120000,
+        "tilt": 30,
+        "azimuth": 0,
+        "optimal angles": true,
+        "losses": 10,
+        "trackingtype": 1,
+        "serie": "TMY",
+        "ageing": false,
+        "degradation factor": 1,
+        "owned": true,
+        "priority": 5
+    },
+    
+    "battery": { 
+        "capacity": 50000,
+        "max power": 25000,
+        "min SOC": 0.1,
+        "max SOC": 0.9,
+        "efficiency": 0.9,
+        "self discharge": 0.001,
+        "priority": 6,
+        "owned": true
+    },
+    
+    "large_energy_storage": { 
+        "capacity": 200000,
+        "max power": 50000,
+        "min SOC": 0.1,
+        "max SOC": 0.9,
+        "efficiency": 0.85,
+        "self discharge": 0.0005,
+        "priority": 7,
+        "owned": true
+    },
+    
+    "electrolyzer": { 
+        "Npower": 80000,
+        "number of modules": 800,
+        "stack model": "PEM General",
+        "efficiency": false,
+        "strategy": "hydrogen-first",
+        "only_renewables": true,
+        "minimum_load": false,
+        "min power module": 0.1,
+        "ageing": false,
+        "power distribution": "parallel",
+        "operational_period": "01-01,31-12",
+        "state": "on",
+        "priority": 8
+    },
+    
+    "fuel cell": { 
+        "Npower": 60000,
+        "number of modules": 600,
+        "stack model": "PEM General",
+        "electric efficiency": false,
+        "thermal efficiency": false,
+        "ageing": false,
+        "min power module": 0.1,
+        "operational_period": "01-01,31-12",
+        "state": "on",
+        "priority": 9
+    },
+    
+    "hydrogen_compressor": { 
+        "P_out": 300,
+        "P_in": 30,
+        "T_in": 343.15,
+        "compressor model": "simple_compressor",
+        "fluid": "Hydrogen",
+        "pressure losses IC": 0.02,
+        "T_IC": 308.15,
+        "n_stages": 3,
+        "only_renewables": true,
+        "priority": 10
+    },
+    
+    "hydrogen_storage": { 
+        "max capacity": 10000,
+        "pressure": 300,
+        "priority": 16
+    },
+    
+    "steel_production": { 
+        "electricity demand": { 
+            "series": "steel_electric_load.csv",
+            "priority": 17 
+        },
+        "hydrogen demand": { 
+            "series": "steel_hydrogen_load.csv",
+            "priority": 18 
+        },
+        "heat demand": { 
+            "series": "steel_heat_load.csv",
+            "priority": 19 
+        }
+    },
+    
+    "ammonia_production": { 
+        "electricity demand": { 
+            "series": "ammonia_electric_load.csv",
+            "priority": 20 
+        },
+        "hydrogen demand": { 
+            "series": "ammonia_hydrogen_load.csv",
+            "priority": 21 
+        },
+        "heat demand": { 
+            "series": "ammonia_heat_load.csv",
+            "priority": 22 
+        }
+    }
+}
+}

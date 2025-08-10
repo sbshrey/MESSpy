@@ -1,0 +1,31 @@
+TECHNOLOGY COST CONFIGURATION - INPUT_TEST_4
+
+This file defines the capital costs, operation & maintenance (O&M) costs, and replacement costs
+for all technologies in the Mixed End-Use Hybrid Plant.
+
+COST STRUCTURE BREAKDOWN:
+
+RENEWABLE ENERGY:
+- Wind Power: 1,200 €/kW with 3% O&M, 80% replacement after 25 years
+- Solar PV: 1,000 €/kW with 1% O&M, 80% replacement after 25 years
+
+ENERGY STORAGE:
+- Battery Storage: 800 €/kWh with 1% O&M, 60% replacement after 20 years
+- Large-scale Storage: 600 €/kWh with 1% O&M, 80% replacement after 30 years
+
+HYDROGEN INFRASTRUCTURE:
+- Electrolyzer: Default price correlation with 1% O&M, 30% replacement after 15 years
+- Fuel Cell: 3,000 €/kW with 2% O&M, 30% replacement after 15 years
+- Hydrogen Compressor: Default price correlation with 1% O&M, 30% replacement after 20 years
+- Hydrogen Storage: 450 €/kg with 1% O&M, 80% replacement after 30 years
+
+END-USE FACILITIES:
+- Steel Production: 5,000,000 € with 2% O&M, 100% replacement after 40 years
+- Ammonia Production: 3,000,000 € with 2% O&M, 100% replacement after 40 years
+
+COST ASSUMPTIONS:
+- All costs are in Euros (€)
+- O&M costs are annual percentages of capital cost
+- Replacement costs are percentages of original capital cost
+- Default price correlations use industry-standard cost models
+- End-use facility costs represent complete industrial plant costs
