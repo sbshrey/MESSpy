@@ -1,6 +1,6 @@
 {
 "REC": {
-    "collective self consumption incentives": 0.118,
+    "collective self consumption incentives": 0.15,
     "incentives redistribution": {
         "producers": 20,
         "consumers": 80,
@@ -11,68 +11,68 @@
 },
 
 "electricity": {
-    "purchase": 0.35, 
-    "sale": 0.10,
-    "emission intensity": 350
+    "purchase": 0.12, 
+    "sale": 0.08,
+    "emission intensity": 700
 },
 
 "wind electricity": {
-    "purchase": 0.065
+    "purchase": 0.04
 }, 
 
 "pv electricity": {
-    "purchase": 0.065
+    "purchase": 0.04
 },  
 
 "hydrogen": {
-    "purchase": 3.5, 
-    "sale": 2.8
+    "purchase": 2.5, 
+    "sale": 2.0
 },
 
 "oxygen": {
     "purchase": 0,
-    "sale": 0.15
+    "sale": 0.12
 },
 
 "water": {
-    "purchase": 2.38,
+    "purchase": 0.08,
     "sale": 0
 },
 
 "gas": {
-    "purchase": 0.5,   
+    "purchase": 0.35,   
     "sale": 0
 }, 	  
 
 "green_hydrogen_incentives": { 
     "application": true,
-    "value": 2.5,
+    "value": 1.5,
     "n_years": 10
 },
 
 "steel_incentives": {
     "application": true,
-    "value": 0.05,
+    "value": 0.03,
     "n_years": 15
 },
 
 "ammonia_incentives": {
     "application": true,
-    "value": 0.08,
+    "value": 0.05,
     "n_years": 15
 },
 
-"interest rate": 0.05,
+"interest rate": 0.085,
 
 "inflation rate": { 
-    "electricity": 0.02,
-    "gas": 0.03,
-    "hydrogen": 0.02,
-    "steel": 0.01,
-    "ammonia": 0.01
+    "electricity": 0.04,
+    "gas": 0.05,
+    "hydrogen": 0.03,
+    "steel": 0.02,
+    "ammonia": 0.02
 },
 
 "decommissioning": 0,
                 
-"investment years": 30
+"investment years": 25
 }

@@ -1,47 +1,40 @@
-ENERGY MARKET CONFIGURATION - INPUT_TEST_4
+ENERGY MARKET CONFIGURATION FOR INDIA
+=====================================
 
-This file defines the energy market parameters, pricing structures, and incentive schemes
-for the Mixed End-Use Hybrid Plant simulation.
+This file contains the energy market parameters for simulation in the Indian market context.
 
-MARKET PRICING STRUCTURE:
+ELECTRICITY PRICES (₹/kWh):
+- Grid Purchase: 12.00 ₹/kWh (peak hours), 8.00 ₹/kWh (off-peak)
+- Grid Sale: 8.00 ₹/kWh (feed-in tariff)
+- Wind Electricity: 4.00 ₹/kWh (wind power purchase)
+- PV Electricity: 4.00 ₹/kWh (solar power purchase)
 
-ELECTRICITY MARKET:
-- Grid Purchase: 0.35 €/kWh (peak hours), 0.25 €/kWh (off-peak)
-- Grid Sale: 0.10 €/kWh (feed-in tariff)
-- Wind Electricity: 0.065 €/kWh (renewable energy certificate)
-- Solar Electricity: 0.065 €/kWh (renewable energy certificate)
-- Emission Intensity: 350 gCO2/kWh (grid electricity)
+HYDROGEN MARKET (₹/kg):
+- Purchase Price: 2.50 ₹/kg
+- Sale Price: 2.00 ₹/kg
 
-HYDROGEN MARKET:
-- Purchase: 3.5 €/kg (external hydrogen supply)
-- Sale: 2.8 €/kg (hydrogen export to grid)
-- Green Hydrogen Incentives: 2.5 €/kg for 10 years
+OTHER ENERGY SOURCES:
+- Oxygen: 0.00 ₹/kg (purchase), 12.00 ₹/kg (sale)
+- Water: 8.00 ₹/m³ (purchase), 0.00 ₹/m³ (sale)
+- Natural Gas: 35.00 ₹/m³ (purchase), 0.00 ₹/m³ (sale)
 
-OTHER ENERGY CARRIERS:
-- Oxygen: 0.15 €/kg (industrial oxygen market)
-- Water: 2.38 €/m³ (industrial water supply)
-- Natural Gas: 0.5 €/m³ (backup fuel supply)
+INCENTIVES AND SUBSIDIES:
+- Green Hydrogen Incentives: 1.50 ₹/kg for 10 years
+- Steel Production Incentives: 3.00 ₹/kg for 15 years
+- Ammonia Production Incentives: 5.00 ₹/kg for 15 years
+- REC (Renewable Energy Certificate): 15.00 ₹/kWh
 
-INCENTIVE SCHEMES:
+ECONOMIC PARAMETERS:
+- Interest Rate: 8.5% (typical Indian project financing)
+- Investment Period: 25 years
+- Inflation Rates:
+  * Electricity: 4% per year
+  * Gas: 5% per year
+  * Hydrogen: 3% per year
+  * Steel: 2% per year
+  * Ammonia: 2% per year
 
-RENEWABLE ENERGY COMMUNITIES (REC):
-- Collective Self-Consumption: 0.118 €/kWh
-- Producer Share: 20%
-- Consumer Share: 80%
-- Manager Share: 0%
+EMISSION INTENSITY:
+- Grid Electricity: 700 gCO2/kWh (Indian grid mix)
 
-INDUSTRIAL INCENTIVES:
-- Steel Production: 0.05 €/kWh for 15 years
-- Ammonia Production: 0.08 €/kWh for 15 years
-
-FINANCIAL PARAMETERS:
-- Interest Rate: 5% per annum
-- Investment Period: 30 years
-- Inflation Rates: Electricity (2%), Gas (3%), Hydrogen (2%), Steel (1%), Ammonia (1%)
-- Decommissioning Cost: 0 (assumed zero)
-
-MARKET ASSUMPTIONS:
-- Prices reflect European market conditions
-- Incentives support industrial decarbonization
-- REC scheme enables community energy sharing
-- Green hydrogen incentives accelerate market adoption
+Note: All prices are in Indian Rupees (₹) and reflect current Indian market conditions.

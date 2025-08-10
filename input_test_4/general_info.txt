@@ -1,18 +1,25 @@
-GENERAL CONFIGURATION - INPUT_TEST_4
+GENERAL CONFIGURATION FOR INDIA
+==============================
 
-Simulation Parameters:
-- Duration: 1 year
-- Timestep: 60 minutes
-- Location: Latitude 42.33°, Longitude 10.489°
-- Time Zone: UTC+1 with DST
+This file contains the general simulation parameters for the Indian market context.
+
+LOCATION AND TIME SETTINGS:
+- Latitude: 28.6139°N (New Delhi, India)
+- Longitude: 77.2090°E (New Delhi, India)
+- UTC Time Zone: +5.5 hours (Indian Standard Time)
+- Daylight Saving Time: No (India does not observe DST)
 - Weather Data: TMY (Typical Meteorological Year)
 
-System Overview:
-This configuration represents a mixed end-use hybrid plant that integrates renewable energy
-generation with industrial hydrogen production and end-use applications. The system is
-designed to demonstrate the technical and economic feasibility of decarbonizing industrial
-processes through renewable hydrogen integration.
+SIMULATION PARAMETERS:
+- Simulation Duration: 1 year
+- Time Step: 1 hour
+- Weather Source: TMY data for New Delhi region
 
-The plant operates as a self-contained energy system that can both import and export
-electricity to/from the grid, while producing hydrogen for industrial applications and
-storing excess renewable energy for later use.
+GEOGRAPHICAL CONTEXT:
+- Location: New Delhi, National Capital Territory, India
+- Climate: Semi-arid with hot summers and cool winters
+- Solar Resource: Excellent (5-6 kWh/m²/day average)
+- Wind Resource: Moderate (3-5 m/s average wind speed)
+- Agricultural Zone: Suitable for renewable energy projects
+
+Note: This configuration is optimized for Indian market conditions and regulatory framework.

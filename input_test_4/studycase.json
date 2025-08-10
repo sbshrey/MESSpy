@@ -41,13 +41,13 @@
     
     "wind": { 
         "model": "power curve",
-        "Npower": 150000,
+        "Npower": 50000,
         "WScutin": 3.0,
         "WSrated": 13.0,
         "WScutoff": 25.0,
         "z_i": 100,
         "alpha": 0.4,
-        "area": 60,
+        "area": 20,
         "efficiency": 0.45,
         "Nbands": 40,
         "serie": "TMY",
@@ -58,11 +58,11 @@
     },
     
     "PV": { 
-        "peakP": 120000,
-        "tilt": 30,
+        "peakP": 40000,
+        "tilt": 28,
         "azimuth": 0,
         "optimal angles": true,
-        "losses": 10,
+        "losses": 12,
         "trackingtype": 1,
         "serie": "TMY",
         "ageing": false,
@@ -72,8 +72,8 @@
     },
     
     "battery": { 
-        "capacity": 50000,
-        "max power": 25000,
+        "capacity": 20000,
+        "max power": 10000,
         "min SOC": 0.1,
         "max SOC": 0.9,
         "efficiency": 0.9,
@@ -83,8 +83,8 @@
     },
     
     "large_energy_storage": { 
-        "capacity": 200000,
-        "max power": 50000,
+        "capacity": 80000,
+        "max power": 20000,
         "min SOC": 0.1,
         "max SOC": 0.9,
         "efficiency": 0.85,
@@ -94,8 +94,8 @@
     },
     
     "electrolyzer": { 
-        "Npower": 80000,
-        "number of modules": 800,
+        "Npower": 25000,
+        "number of modules": 250,
         "stack model": "PEM General",
         "efficiency": false,
         "strategy": "hydrogen-first",
@@ -110,8 +110,8 @@
     },
     
     "fuel cell": { 
-        "Npower": 60000,
-        "number of modules": 600,
+        "Npower": 20000,
+        "number of modules": 200,
         "stack model": "PEM General",
         "electric efficiency": false,
         "thermal efficiency": false,
@@ -136,7 +136,7 @@
     },
     
     "hydrogen_storage": { 
-        "max capacity": 10000,
+        "max capacity": 5000,
         "pressure": 300,
         "priority": 16
     },
