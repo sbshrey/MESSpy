@@ -14,7 +14,7 @@ matplotlib.use('Agg')
 
 # Set page config
 st.set_page_config(
-    page_title="Hybrid Plant Simulation Dashboard",
+    page_title="MESS - Multi-Energy System Simulator Platform",
     page_icon="⚡",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -454,7 +454,7 @@ def display_output_summary():
 
 def main():
     # Header
-    st.markdown('<h1 class="main-header">⚡ Hybrid Plant Simulation Dashboard</h1>', unsafe_allow_html=True)
+    st.markdown('<h1 class="main-header">⚡ MESS - Multi-Energy System Simulator Platform</h1>', unsafe_allow_html=True)
     
     # Determine current page first
     if st.session_state.get('current_page', None) == "Results":
