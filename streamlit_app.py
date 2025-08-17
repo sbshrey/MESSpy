@@ -245,15 +245,233 @@ def display_image_gallery():
                 )
             st.divider()
 
+def display_csv_outputs():
+    """Display all CSV output files with interactive viewing"""
+    outputs_dir = Path("input_test_4/outputs")
+    if not outputs_dir.exists():
+        st.warning("No outputs directory found. Please run the simulation first.")
+        return
+    
+    st.subheader("📊 CSV Output Files")
+    st.write("View and download all generated CSV files:")
+    
+    # Create tabs for different output categories
+    tab1, tab2, tab3 = st.tabs(["Intermediate Outputs", "Final Outputs", "Reconciliation Reports"])
+    
+    with tab1:
+        st.write("**🔄 Intermediate Outputs** - Raw data processing and summary statistics")
+        intermediate_dir = outputs_dir / "intermediate"
+        if intermediate_dir.exists():
+            csv_files = list(intermediate_dir.glob("*.csv"))
+            if csv_files:
+                for csv_file in csv_files:
+                    with st.expander(f"📄 {csv_file.stem.replace('_', ' ').title()}", expanded=False):
+                        try:
+                            # Load and display CSV data
+                            df = pd.read_csv(csv_file)
+                            
+                            # Show file info
+                            col1, col2, col3 = st.columns(3)
+                            with col1:
+                                st.metric("Rows", len(df))
+                            with col2:
+                                st.metric("Columns", len(df.columns))
+                            with col3:
+                                file_size = csv_file.stat().st_size / 1024  # KB
+                                st.metric("Size", f"{file_size:.1f} KB")
+                            
+                            # Display data
+                            st.dataframe(df, use_container_width=True)
+                            
+                            # Download button
+                            with open(csv_file, "rb") as f:
+                                st.download_button(
+                                    label=f"📥 Download {csv_file.name}",
+                                    data=f.read(),
+                                    file_name=csv_file.name,
+                                    mime="text/csv",
+                                    key=f"download_intermediate_{csv_file.stem}"
+                                )
+                        except Exception as e:
+                            st.error(f"Error loading {csv_file.name}: {str(e)}")
+            else:
+                st.warning("No intermediate CSV files found.")
+        else:
+            st.warning("Intermediate outputs directory not found.")
+    
+    with tab2:
+        st.write("**📈 Final Outputs** - Processed results and comprehensive analysis")
+        final_dir = outputs_dir / "final"
+        if final_dir.exists():
+            csv_files = list(final_dir.glob("*.csv"))
+            if csv_files:
+                for csv_file in csv_files:
+                    with st.expander(f"📄 {csv_file.stem.replace('_', ' ').title()}", expanded=False):
+                        try:
+                            # Load and display CSV data
+                            df = pd.read_csv(csv_file)
+                            
+                            # Show file info
+                            col1, col2, col3 = st.columns(3)
+                            with col1:
+                                st.metric("Rows", len(df))
+                            with col2:
+                                st.metric("Columns", len(df.columns))
+                            with col3:
+                                file_size = csv_file.stat().st_size / 1024  # KB
+                                st.metric("Size", f"{file_size:.1f} KB")
+                            
+                            # Display data
+                            st.dataframe(df, use_container_width=True)
+                            
+                            # Download button
+                            with open(csv_file, "rb") as f:
+                                st.download_button(
+                                    label=f"📥 Download {csv_file.name}",
+                                    data=f.read(),
+                                    file_name=csv_file.name,
+                                    mime="text/csv",
+                                    key=f"download_final_{csv_file.stem}"
+                                )
+                        except Exception as e:
+                            st.error(f"Error loading {csv_file.name}: {str(e)}")
+            else:
+                st.warning("No final CSV files found.")
+        else:
+            st.warning("Final outputs directory not found.")
+    
+    with tab3:
+        st.write("**🔍 Reconciliation Reports** - Data validation and consistency checks")
+        reconciliation_dir = outputs_dir / "reconciliation"
+        if reconciliation_dir.exists():
+            csv_files = list(reconciliation_dir.glob("*.csv"))
+            if csv_files:
+                for csv_file in csv_files:
+                    with st.expander(f"📄 {csv_file.stem.replace('_', ' ').title()}", expanded=False):
+                        try:
+                            # Load and display CSV data
+                            df = pd.read_csv(csv_file)
+                            
+                            # Show file info
+                            col1, col2, col3 = st.columns(3)
+                            with col1:
+                                st.metric("Rows", len(df))
+                            with col2:
+                                st.metric("Columns", len(df.columns))
+                            with col3:
+                                file_size = csv_file.stat().st_size / 1024  # KB
+                                st.metric("Size", f"{file_size:.1f} KB")
+                            
+                            # Special handling for reconciliation summary
+                            if "summary_statistics" in csv_file.name:
+                                st.success("✅ **Data Quality Summary**")
+                                if len(df) > 0:
+                                    quality_score = df.iloc[0].get('Data_Quality_Score', 0)
+                                    st.metric("Overall Data Quality Score", f"{quality_score:.1f}%")
+                            
+                            # Display data
+                            st.dataframe(df, use_container_width=True)
+                            
+                            # Download button
+                            with open(csv_file, "rb") as f:
+                                st.download_button(
+                                    label=f"📥 Download {csv_file.name}",
+                                    data=f.read(),
+                                    file_name=csv_file.name,
+                                    mime="text/csv",
+                                    key=f"download_reconciliation_{csv_file.stem}"
+                                )
+                        except Exception as e:
+                            st.error(f"Error loading {csv_file.name}: {str(e)}")
+            else:
+                st.warning("No reconciliation CSV files found.")
+        else:
+            st.warning("Reconciliation directory not found.")
+
+def display_output_summary():
+    """Display summary of all generated outputs"""
+    outputs_dir = Path("input_test_4/outputs")
+    if not outputs_dir.exists():
+        st.warning("No outputs directory found. Please run the simulation first.")
+        return
+    
+    st.subheader("📊 Output Summary")
+    
+    # Count files in each directory
+    summary_data = []
+    
+    for category in ["intermediate", "final", "reconciliation"]:
+        category_dir = outputs_dir / category
+        if category_dir.exists():
+            csv_files = list(category_dir.glob("*.csv"))
+            total_size = sum(f.stat().st_size for f in csv_files) / 1024  # KB
+            
+            summary_data.append({
+                "Category": category.replace("_", " ").title(),
+                "Files": len(csv_files),
+                "Total Size (KB)": f"{total_size:.1f}",
+                "Status": "✅ Available" if csv_files else "⚠️ Empty"
+            })
+        else:
+            summary_data.append({
+                "Category": category.replace("_", " ").title(),
+                "Files": 0,
+                "Total Size (KB)": "0.0",
+                "Status": "❌ Not Found"
+            })
+    
+    # Display summary table
+    summary_df = pd.DataFrame(summary_data)
+    st.dataframe(summary_df, use_container_width=True)
+    
+    # Show recommendations
+    st.subheader("💡 Quick Actions")
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        if st.button("🔄 Refresh Outputs", key="refresh_outputs"):
+            st.rerun()
+    
+    with col2:
+        if st.button("📥 Download All CSV Files", key="download_all_csv"):
+            st.info("Use individual download buttons in the tabs above to download specific files.")
+    
+    with col3:
+        if st.button("📊 View Data Quality", key="view_quality"):
+            reconciliation_dir = outputs_dir / "reconciliation"
+            summary_file = reconciliation_dir / "reconciliation_summary_statistics.csv"
+            if summary_file.exists():
+                try:
+                    df = pd.read_csv(summary_file)
+                    if len(df) > 0:
+                        quality_score = df.iloc[0].get('Data_Quality_Score', 0)
+                        st.success(f"Data Quality Score: {quality_score:.1f}%")
+                    else:
+                        st.warning("No quality data available")
+                except:
+                    st.warning("Could not load quality data")
+            else:
+                st.warning("Quality report not found")
+
 def main():
     # Header
     st.markdown('<h1 class="main-header">⚡ Hybrid Plant Simulation Dashboard</h1>', unsafe_allow_html=True)
     
     # Sidebar
     st.sidebar.title("Navigation")
+    
+    # Check if outputs are available
+    outputs_dir = Path("input_test_4/outputs")
+    outputs_available = outputs_dir.exists() and any(outputs_dir.rglob("*.csv"))
+    
+    if outputs_available:
+        st.sidebar.success("✅ Outputs Available")
+    else:
+        st.sidebar.warning("⚠️ No Outputs Found")
+    
     page = st.sidebar.selectbox(
         "Choose a page:",
-        ["Overview", "Configuration", "Simulation", "Results", "Documentation"]
+        ["Overview", "Configuration", "Simulation", "Results", "Documentation", "Output Files"]
     )
     
     if page == "Overview":
@@ -266,6 +484,8 @@ def main():
         show_results()
     elif page == "Documentation":
         show_documentation()
+    elif page == "Output Files":
+        show_output_files()
 
 def show_overview():
     """Show overview page"""
@@ -764,35 +984,43 @@ def show_results():
         return
     
     # Results tabs
-    tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
-        "Energy Flow", "System Summary", "Economic Analysis", "Load Profiles", "Production Profiles", "PDF Report", "Image Gallery"
+    tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8, tab9 = st.tabs([
+        "Output Summary", "CSV Files", "Energy Flow", "System Summary", "Economic Analysis", "Load Profiles", "Production Profiles", "PDF Report", "Image Gallery"
     ])
     
     with tab1:
+        st.subheader("📊 Output Summary")
+        display_output_summary()
+    
+    with tab2:
+        st.subheader("📄 CSV Output Files")
+        display_csv_outputs()
+    
+    with tab3:
         st.subheader("Energy Flow Diagram")
         display_energy_flow_diagram()
     
-    with tab2:
+    with tab4:
         st.subheader("System Summary")
         display_system_summary()
     
-    with tab3:
+    with tab5:
         st.subheader("Economic Analysis")
         display_economic_analysis()
     
-    with tab4:
+    with tab6:
         st.subheader("Load Profiles")
         display_load_profiles()
     
-    with tab5:
+    with tab7:
         st.subheader("Production Profiles")
         display_production_profiles()
     
-    with tab6:
+    with tab8:
         st.subheader("PDF Report")
         display_pdf_report()
     
-    with tab7:
+    with tab9:
         st.subheader("Image Gallery")
         display_image_gallery()
     
@@ -850,7 +1078,7 @@ def show_documentation():
     st.header("📚 Documentation")
     
     # Create tabs for different documentation sections
-    tab1, tab2, tab3 = st.tabs(["Model Inputs", "Technology Components", "Quick Guide"])
+    tab1, tab2, tab3, tab4 = st.tabs(["Model Inputs", "Technology Components", "Output Generation", "Quick Guide"])
     
     with tab1:
         st.subheader("📋 Model Inputs Documentation")
@@ -1006,6 +1234,83 @@ def show_documentation():
             st.error(f"Error loading Technology Components Analysis: {str(e)}")
     
     with tab3:
+        st.subheader("📊 Output Generation System")
+        st.markdown("""
+        This section provides comprehensive documentation of the output generation system 
+        that creates intermediate and final CSV files, along with a detailed reconciliation 
+        exercise to validate data consistency and robustness.
+        """)
+        
+        # Load and display the Output Generation Documentation
+        try:
+            with open("input_test_4/OUTPUT_GENERATION_DOCUMENTATION.md", "r", encoding="utf-8") as f:
+                output_docs = f.read()
+            
+            # Convert markdown to HTML for better display
+            try:
+                import markdown
+                html_content = markdown.markdown(output_docs, extensions=['tables', 'fenced_code'])
+            except ImportError:
+                # Fallback if markdown library is not available
+                st.warning("Markdown library not available. Displaying raw markdown.")
+                st.markdown(output_docs)
+                return
+            
+            # Display with custom CSS for better formatting
+            st.markdown("""
+            <style>
+            .output-documentation-content {
+                background-color: #f8f9fa;
+                padding: 20px;
+                border-radius: 10px;
+                border-left: 4px solid #ffc107;
+                margin: 10px 0;
+            }
+            .output-documentation-content table {
+                border-collapse: collapse;
+                width: 100%;
+                margin: 10px 0;
+            }
+            .output-documentation-content th, .output-documentation-content td {
+                border: 1px solid #ddd;
+                padding: 8px;
+                text-align: left;
+            }
+            .output-documentation-content th {
+                background-color: #ffc107;
+                color: white;
+            }
+            .output-documentation-content h1, .output-documentation-content h2, .output-documentation-content h3 {
+                color: #ffc107;
+                margin-top: 20px;
+                margin-bottom: 10px;
+            }
+            .output-documentation-content code {
+                background-color: #e9ecef;
+                padding: 2px 4px;
+                border-radius: 3px;
+                font-family: 'Courier New', monospace;
+            }
+            </style>
+            """, unsafe_allow_html=True)
+            
+            st.markdown(f'<div class="output-documentation-content">{html_content}</div>', unsafe_allow_html=True)
+            
+            # Add download button for the documentation
+            with open("input_test_4/OUTPUT_GENERATION_DOCUMENTATION.md", "r", encoding="utf-8") as f:
+                st.download_button(
+                    label="📥 Download Output Generation Documentation (PDF)",
+                    data=f.read(),
+                    file_name="OUTPUT_GENERATION_DOCUMENTATION.md",
+                    mime="text/markdown"
+                )
+                
+        except FileNotFoundError:
+            st.error("Output Generation Documentation file not found. Please ensure the file exists in the input_test_4 directory.")
+        except Exception as e:
+            st.error(f"Error loading Output Generation Documentation: {str(e)}")
+    
+    with tab4:
         st.subheader("🚀 Quick Start Guide")
         st.markdown("""
         ### Hybrid Plant Simulation Quick Guide
@@ -1135,6 +1440,55 @@ def show_documentation():
             - No environmental impact
             - Basic grid integration
             """)
+
+def show_output_files():
+    """Show output files page"""
+    st.header("📊 Output Files Viewer")
+    
+    st.markdown("""
+    ### Comprehensive Output Analysis
+    
+    This page provides direct access to all generated CSV files from the simulation.
+    You can view, analyze, and download all output data in one place.
+    """)
+    
+    # Check if outputs exist
+    outputs_dir = Path("input_test_4/outputs")
+    if not outputs_dir.exists():
+        st.warning("⚠️ No output files found. Please run the simulation first to generate outputs.")
+        st.info("💡 **To generate outputs:** Go to the Simulation page and click 'Start Simulation'")
+        return
+    
+    # Display output summary
+    display_output_summary()
+    
+    st.divider()
+    
+    # Display all CSV files
+    display_csv_outputs()
+    
+    # Additional features
+    st.divider()
+    st.subheader("🔧 Advanced Features")
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.markdown("""
+        **📈 Data Analysis Tips:**
+        - Use the expandable sections to view detailed data
+        - Download CSV files for external analysis
+        - Check reconciliation reports for data quality
+        - Review recommendations for improvements
+        """)
+    
+    with col2:
+        st.markdown("""
+        **💾 File Categories:**
+        - **Intermediate**: Raw data processing
+        - **Final**: Processed results and analysis
+        - **Reconciliation**: Data validation reports
+        """)
 
 if __name__ == "__main__":
     main()

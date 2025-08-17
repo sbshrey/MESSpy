@@ -25,6 +25,8 @@ from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import inch
 from reportlab.lib import colors
 from reportlab.lib.enums import TA_CENTER, TA_LEFT, TA_RIGHT
+from output_generator import OutputGenerator
+from reconciliation_exercise import ReconciliationExercise
 
 # Set plotting style
 plt.style.use('default')
@@ -722,6 +724,26 @@ def simulate_hybrid_plant():
     print(f"💾 Plots Saved to: {PLOTS_DIR}/")
     print("=" * 50)
     
+    # Generate comprehensive output files
+    print("\n📊 Generating comprehensive output files...")
+    output_gen = OutputGenerator()
+    
+    # Generate intermediate outputs
+    output_gen.save_intermediate_outputs(loads_data, production_data, studycase_config)
+    
+    # Generate final outputs
+    output_gen.generate_final_outputs(studycase_config, tech_costs, energy_market, loads_data, production_data)
+    
+    # Generate reconciliation report
+    reconciliation_df = output_gen.generate_reconciliation_report(loads_data, production_data, studycase_config, tech_costs, energy_market)
+    
+    # Run comprehensive reconciliation exercise
+    print("\n🔍 Running comprehensive reconciliation exercise...")
+    reconciliation_exercise = ReconciliationExercise()
+    reconciliation_results = reconciliation_exercise.run_comprehensive_reconciliation(
+        loads_data, production_data, studycase_config, tech_costs, energy_market
+    )
+    
     # Generate PDF report
     print("\n📄 Generating PDF summary report...")
     generate_pdf_report(studycase_config, tech_costs, energy_market, loads_data, production_data, 
@@ -730,7 +752,8 @@ def simulate_hybrid_plant():
     print(f"\n✅ Simulation completed successfully!")
     print(f"📁 All plots saved in: {PLOTS_DIR}/")
     print(f"📄 PDF report saved in: {PLOTS_DIR}/")
-    print(f"🔍 You can review the plots and report later for detailed analysis")
+    print(f"📊 Output files saved in: {output_gen.output_dir}/")
+    print(f"🔍 You can review the plots, reports, and CSV files for detailed analysis")
 
 def generate_pdf_report(studycase_config, tech_costs, energy_market, loads_data, production_data, 
                        total_renewable_capacity, total_storage_capacity, total_capital_cost):
