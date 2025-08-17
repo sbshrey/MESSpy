@@ -849,66 +849,292 @@ def show_documentation():
     """Show documentation page"""
     st.header("📚 Documentation")
     
-    st.markdown("""
-    ### Hybrid Plant Simulation Documentation
+    # Create tabs for different documentation sections
+    tab1, tab2, tab3 = st.tabs(["Model Inputs", "Technology Components", "Quick Guide"])
     
-    This application provides an interactive interface for configuring and running 
-    a hybrid renewable energy and hydrogen production plant simulation.
+    with tab1:
+        st.subheader("📋 Model Inputs Documentation")
+        st.markdown("""
+        This section provides a comprehensive overview of all inputs being taken by the model, 
+        including what variables are considered, what is assumed implicitly, and what is not used.
+        """)
+        
+        # Load and display the Model Inputs Documentation
+        try:
+            with open("input_test_4/MODEL_INPUTS_DOCUMENTATION.md", "r", encoding="utf-8") as f:
+                model_docs = f.read()
+            
+            # Convert markdown to HTML for better display
+            try:
+                import markdown
+                html_content = markdown.markdown(model_docs, extensions=['tables', 'fenced_code'])
+            except ImportError:
+                # Fallback if markdown library is not available
+                st.warning("Markdown library not available. Displaying raw markdown.")
+                st.markdown(model_docs)
+                return
+            
+            # Display with custom CSS for better formatting
+            st.markdown("""
+            <style>
+            .documentation-content {
+                background-color: #f8f9fa;
+                padding: 20px;
+                border-radius: 10px;
+                border-left: 4px solid #1f77b4;
+                margin: 10px 0;
+            }
+            .documentation-content table {
+                border-collapse: collapse;
+                width: 100%;
+                margin: 10px 0;
+            }
+            .documentation-content th, .documentation-content td {
+                border: 1px solid #ddd;
+                padding: 8px;
+                text-align: left;
+            }
+            .documentation-content th {
+                background-color: #1f77b4;
+                color: white;
+            }
+            .documentation-content h1, .documentation-content h2, .documentation-content h3 {
+                color: #1f77b4;
+                margin-top: 20px;
+                margin-bottom: 10px;
+            }
+            .documentation-content code {
+                background-color: #e9ecef;
+                padding: 2px 4px;
+                border-radius: 3px;
+                font-family: 'Courier New', monospace;
+            }
+            </style>
+            """, unsafe_allow_html=True)
+            
+            st.markdown(f'<div class="documentation-content">{html_content}</div>', unsafe_allow_html=True)
+            
+            # Add download button for the documentation
+            with open("input_test_4/MODEL_INPUTS_DOCUMENTATION.md", "r", encoding="utf-8") as f:
+                st.download_button(
+                    label="📥 Download Model Inputs Documentation (PDF)",
+                    data=f.read(),
+                    file_name="MODEL_INPUTS_DOCUMENTATION.md",
+                    mime="text/markdown"
+                )
+                
+        except FileNotFoundError:
+            st.error("Model Inputs Documentation file not found. Please ensure the file exists in the input_test_4 directory.")
+        except Exception as e:
+            st.error(f"Error loading Model Inputs Documentation: {str(e)}")
     
-    #### System Components
+    with tab2:
+        st.subheader("🔧 Technology Components Analysis")
+        st.markdown("""
+        This section provides a comprehensive analysis of all technology components, 
+        their inputs/outputs, capabilities, and limitations to give a clear picture 
+        of what the simulation can and cannot do.
+        """)
+        
+        # Load and display the Technology Components Analysis
+        try:
+            with open("input_test_4/TECHNOLOGY_COMPONENTS_ANALYSIS.md", "r", encoding="utf-8") as f:
+                tech_docs = f.read()
+            
+            # Convert markdown to HTML for better display
+            try:
+                import markdown
+                html_content = markdown.markdown(tech_docs, extensions=['tables', 'fenced_code'])
+            except ImportError:
+                # Fallback if markdown library is not available
+                st.warning("Markdown library not available. Displaying raw markdown.")
+                st.markdown(tech_docs)
+                return
+            
+            # Display with custom CSS for better formatting
+            st.markdown("""
+            <style>
+            .tech-documentation-content {
+                background-color: #f8f9fa;
+                padding: 20px;
+                border-radius: 10px;
+                border-left: 4px solid #28a745;
+                margin: 10px 0;
+            }
+            .tech-documentation-content table {
+                border-collapse: collapse;
+                width: 100%;
+                margin: 10px 0;
+            }
+            .tech-documentation-content th, .tech-documentation-content td {
+                border: 1px solid #ddd;
+                padding: 8px;
+                text-align: left;
+            }
+            .tech-documentation-content th {
+                background-color: #28a745;
+                color: white;
+            }
+            .tech-documentation-content h1, .tech-documentation-content h2, .tech-documentation-content h3 {
+                color: #28a745;
+                margin-top: 20px;
+                margin-bottom: 10px;
+            }
+            .tech-documentation-content code {
+                background-color: #e9ecef;
+                padding: 2px 4px;
+                border-radius: 3px;
+                font-family: 'Courier New', monospace;
+            }
+            </style>
+            """, unsafe_allow_html=True)
+            
+            st.markdown(f'<div class="tech-documentation-content">{html_content}</div>', unsafe_allow_html=True)
+            
+            # Add download button for the documentation
+            with open("input_test_4/TECHNOLOGY_COMPONENTS_ANALYSIS.md", "r", encoding="utf-8") as f:
+                st.download_button(
+                    label="📥 Download Technology Components Analysis (PDF)",
+                    data=f.read(),
+                    file_name="TECHNOLOGY_COMPONENTS_ANALYSIS.md",
+                    mime="text/markdown"
+                )
+                
+        except FileNotFoundError:
+            st.error("Technology Components Analysis file not found. Please ensure the file exists in the input_test_4 directory.")
+        except Exception as e:
+            st.error(f"Error loading Technology Components Analysis: {str(e)}")
     
-    **🌪️ Wind Power**
-    - Capacity: Configurable wind power generation
-    - Technology: Power curve model with configurable parameters
-    - Location: Optimized for Indian wind conditions
-    
-    **☀️ Solar PV**
-    - Capacity: Configurable solar power generation
-    - Technology: Fixed tilt with tracking options
-    - Location: Optimized for Indian solar conditions
-    
-    **🔋 Battery Storage**
-    - Capacity: Configurable energy storage
-    - Technology: Lithium-ion battery with efficiency modeling
-    - Purpose: Energy time-shifting and grid stability
-    
-    **⚗️ Electrolyzer**
-    - Capacity: Configurable hydrogen production
-    - Technology: PEM electrolyzer with modular design
-    - Purpose: Green hydrogen production from renewable electricity
-    
-    **💧 Hydrogen Infrastructure**
-    - Compressor: Multi-stage hydrogen compression
-    - Storage: High-pressure hydrogen storage
-    - Purpose: Hydrogen handling and distribution
-    
-    **🏭 Ammonia Production**
-    - Capacity: Industrial ammonia synthesis facility
-    - Technology: Green ammonia production from hydrogen
-    - Purpose: End-use application and energy carrier
-    
-    #### Configuration Files
-    
-    - **studycase.json**: System component configuration
-    - **tech_cost.json**: Technology cost parameters
-    - **energy_market.json**: Energy prices and incentives
-    - **Load profiles**: CSV files with demand patterns
-    
-    #### Simulation Outputs
-    
-    - Energy flow diagrams
-    - Economic analysis
-    - System performance metrics
-    - Load and production profiles
-    - PDF summary report
-    
-    #### Usage Instructions
-    
-    1. **Configuration**: Modify system parameters in the Configuration tab
-    2. **Simulation**: Run the simulation in the Simulation tab
-    3. **Results**: View and download results in the Results tab
-    4. **Documentation**: Reference this documentation for system details
-    """)
+    with tab3:
+        st.subheader("🚀 Quick Start Guide")
+        st.markdown("""
+        ### Hybrid Plant Simulation Quick Guide
+        
+        This application provides an interactive interface for configuring and running 
+        a hybrid renewable energy and hydrogen production plant simulation.
+        
+        #### System Components
+        
+        **🌪️ Wind Power**
+        - Capacity: Configurable wind power generation
+        - Technology: Power curve model with configurable parameters
+        - Location: Optimized for Indian wind conditions
+        
+        **☀️ Solar PV**
+        - Capacity: Configurable solar power generation
+        - Technology: Fixed tilt with tracking options
+        - Location: Optimized for Indian solar conditions
+        
+        **🔋 Battery Storage**
+        - Capacity: Configurable energy storage
+        - Technology: Lithium-ion battery with efficiency modeling
+        - Purpose: Energy time-shifting and grid stability
+        
+        **⚗️ Electrolyzer**
+        - Capacity: Configurable hydrogen production
+        - Technology: PEM electrolyzer with modular design
+        - Purpose: Green hydrogen production from renewable electricity
+        
+        **💧 Hydrogen Infrastructure**
+        - Compressor: Multi-stage hydrogen compression
+        - Storage: High-pressure hydrogen storage
+        - Purpose: Hydrogen handling and distribution
+        
+        **🏭 Ammonia Production**
+        - Capacity: Industrial ammonia synthesis facility
+        - Technology: Green ammonia production from hydrogen
+        - Purpose: End-use application and energy carrier
+        
+        #### Configuration Files
+        
+        - **studycase.json**: System component configuration
+        - **tech_cost.json**: Technology cost parameters
+        - **energy_market.json**: Energy prices and incentives
+        - **Load profiles**: CSV files with demand patterns
+        
+        #### Simulation Outputs
+        
+        - Energy flow diagrams
+        - Economic analysis
+        - System performance metrics
+        - Load and production profiles
+        - PDF summary report
+        
+        #### Usage Instructions
+        
+        1. **Configuration**: Modify system parameters in the Configuration tab
+        2. **Simulation**: Run the simulation in the Simulation tab
+        3. **Results**: View and download results in the Results tab
+        4. **Documentation**: Reference the detailed documentation tabs above
+        
+        #### Key Features
+        
+        ✅ **127 Explicit Input Parameters** across 6 major categories  
+        ✅ **16 Technology Components** with detailed modeling  
+        ✅ **Real Weather Data Integration** via PVGIS  
+        ✅ **Comprehensive Economic Analysis** with Indian market data  
+        ✅ **High Temporal Resolution** simulation capability  
+        ✅ **Multi-Energy System** modeling (electricity, heat, hydrogen, oxygen)  
+        
+        #### Model Capabilities
+        
+        **What the simulation CAN do:**
+        - System design and component sizing
+        - Economic feasibility analysis
+        - Technology comparison studies
+        - Long-term strategic planning
+        - Policy impact assessment
+        - Multi-year performance analysis
+        
+        **What the simulation CANNOT do:**
+        - Real-time control and operation
+        - Day-ahead optimization
+        - Grid stability analysis
+        - Component failure modeling
+        - Maintenance scheduling
+        
+        #### Getting Started
+        
+        1. **Review Documentation**: Start with the detailed documentation tabs
+        2. **Configure System**: Use the Configuration tab to set up your system
+        3. **Run Simulation**: Execute the simulation in the Simulation tab
+        4. **Analyze Results**: Review comprehensive results in the Results tab
+        5. **Download Reports**: Save all analysis and documentation for further use
+        """)
+        
+        # Add a summary metrics section
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            st.metric("Input Parameters", "127", "Explicit parameters")
+        with col2:
+            st.metric("Technology Components", "16", "Available technologies")
+        with col3:
+            st.metric("Energy Carriers", "4", "Electricity, Heat, H₂, O₂")
+        
+        # Add a capabilities summary
+        st.subheader("📊 Model Summary")
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            st.markdown("""
+            **✅ Strengths:**
+            - Comprehensive multi-energy modeling
+            - High technical detail
+            - Real weather integration
+            - Detailed economic analysis
+            - Long-term analysis capability
+            - Modular component design
+            """)
+        
+        with col2:
+            st.markdown("""
+            **⚠️ Limitations:**
+            - No real-time control
+            - Simplified operations
+            - Fixed technology options
+            - No environmental impact
+            - Basic grid integration
+            """)
 
 if __name__ == "__main__":
     main()
