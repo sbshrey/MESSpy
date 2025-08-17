@@ -471,7 +471,8 @@ def main():
     
     page = st.sidebar.selectbox(
         "Choose a page:",
-        ["Overview", "Configuration", "Simulation", "Results", "Documentation", "Output Files"]
+        ["Overview", "Configuration", "Simulation", "Results", "Documentation", "Output Files"],
+        key="main_navigation"
     )
     
     if page == "Overview":
@@ -553,7 +554,7 @@ def show_configuration():
         return
     
     # Tabs for different configuration sections
-    tab1, tab2, tab3, tab4 = st.tabs(["System Components", "Technology Costs", "Energy Market", "Load Profiles"])
+    tab1, tab2, tab3, tab4, tab5 = st.tabs(["System Components", "Technology Costs", "Energy Market", "Load Profiles", "Technical Specifications"])
     
     with tab1:
         st.subheader("System Component Configuration")
@@ -567,32 +568,100 @@ def show_configuration():
                 with col1:
                     wind_power = st.number_input(
                         "Wind Power (MW)", 
-                        value=config.get('wind', {}).get('Npower', 50000) / 1000,
+                        value=float(config.get('wind', {}).get('Npower', 50000) / 1000),
                         min_value=1.0,
                         max_value=1000.0,
-                        step=1.0
+                        step=1.0,
+                        key="wind_power_config"
                     )
                     config['wind']['Npower'] = wind_power * 1000
                 
                 with col2:
                     wind_cutin = st.number_input(
                         "Cut-in Speed (m/s)",
-                        value=config.get('wind', {}).get('WScutin', 3.0),
+                        value=float(config.get('wind', {}).get('WScutin', 3.0)),
                         min_value=1.0,
                         max_value=10.0,
-                        step=0.1
+                        step=0.1,
+                        key="wind_cutin_speed"
                     )
                     config['wind']['WScutin'] = wind_cutin
                 
                 with col3:
                     wind_rated = st.number_input(
                         "Rated Speed (m/s)",
-                        value=config.get('wind', {}).get('WSrated', 13.0),
+                        value=float(config.get('wind', {}).get('WSrated', 13.0)),
                         min_value=5.0,
                         max_value=20.0,
-                        step=0.5
+                        step=0.5,
+                        key="wind_rated_speed"
                     )
                     config['wind']['WSrated'] = wind_rated
+                
+                # Additional wind parameters
+                col1, col2, col3 = st.columns(3)
+                with col1:
+                    wind_cutoff = st.number_input(
+                        "Cut-off Speed (m/s)",
+                        value=float(config.get('wind', {}).get('WScutoff', 25.0)),
+                        min_value=15.0,
+                        max_value=35.0,
+                        step=0.5,
+                        key="wind_cutoff_speed"
+                    )
+                    config['wind']['WScutoff'] = wind_cutoff
+                
+                with col2:
+                    wind_hub_height = st.number_input(
+                        "Hub Height (m)",
+                        value=float(config.get('wind', {}).get('z_i', 80.0)),
+                        min_value=20.0,
+                        max_value=200.0,
+                        step=5.0,
+                        key="wind_hub_height"
+                    )
+                    config['wind']['z_i'] = wind_hub_height
+                
+                with col3:
+                    wind_model = st.selectbox(
+                        "Wind Model",
+                        ["power_curve", "betz", "detailed"],
+                        index=0,
+                        key="wind_model_type"
+                    )
+                    config['wind']['model'] = wind_model
+                
+                # Wind aging and efficiency
+                col1, col2, col3 = st.columns(3)
+                with col1:
+                    wind_efficiency = st.number_input(
+                        "Overall Efficiency",
+                        value=float(config.get('wind', {}).get('efficiency', 0.95)),
+                        min_value=0.3,
+                        max_value=1.0,
+                        step=0.01,
+                        key="wind_efficiency"
+                    )
+                    config['wind']['efficiency'] = wind_efficiency
+                
+                with col2:
+                    wind_aging = st.checkbox(
+                        "Enable Aging Effects",
+                        value=config.get('wind', {}).get('ageing', False),
+                        key="wind_aging_enabled"
+                    )
+                    config['wind']['ageing'] = wind_aging
+                
+                with col3:
+                    wind_degradation = st.number_input(
+                        "Degradation Factor (%/year)",
+                        value=float(config.get('wind', {}).get('degradation factor', 1.0)),
+                        min_value=0.0,
+                        max_value=5.0,
+                        step=0.1,
+                        key="wind_degradation_factor"
+                    )
+                    config['wind']['degradation factor'] = wind_degradation
             
             # Solar PV Configuration
             with st.expander("☀️ Solar PV Configuration", expanded=True):
@@ -600,32 +669,95 @@ def show_configuration():
                 with col1:
                     pv_power = st.number_input(
                         "Solar PV Power (MW)",
-                        value=config.get('PV', {}).get('peakP', 40000) / 1000,
+                        value=float(config.get('PV', {}).get('peakP', 40000) / 1000),
                         min_value=1.0,
                         max_value=1000.0,
-                        step=1.0
+                        step=1.0,
+                        key="pv_power_config"
                     )
                     config['PV']['peakP'] = pv_power * 1000
                 
                 with col2:
                     pv_tilt = st.number_input(
                         "Tilt Angle (degrees)",
-                        value=config.get('PV', {}).get('tilt', 28),
-                        min_value=0,
-                        max_value=90,
-                        step=1
+                        value=float(config.get('PV', {}).get('tilt', 28)),
+                        min_value=0.0,
+                        max_value=90.0,
+                        step=1.0,
+                        key="pv_tilt_angle"
                     )
                     config['PV']['tilt'] = pv_tilt
                 
                 with col3:
                     pv_losses = st.number_input(
                         "System Losses (%)",
-                        value=config.get('PV', {}).get('losses', 12),
-                        min_value=0,
-                        max_value=30,
-                        step=1
+                        value=float(config.get('PV', {}).get('losses', 12)),
+                        min_value=0.0,
+                        max_value=30.0,
+                        step=1.0,
+                        key="pv_system_losses"
                     )
                     config['PV']['losses'] = pv_losses
+                
+                # Additional PV parameters
+                col1, col2, col3 = st.columns(3)
+                with col1:
+                    pv_azimuth = st.number_input(
+                        "Azimuth Angle (degrees)",
+                        value=float(config.get('PV', {}).get('azimuth', 0)),
+                        min_value=0.0,
+                        max_value=360.0,
+                        step=5.0,
+                        key="pv_azimuth_angle"
+                    )
+                    config['PV']['azimuth'] = pv_azimuth
+                
+                with col2:
+                    pv_tracking = st.selectbox(
+                        "Tracking Type",
+                        ["fixed", "single_axis", "dual_axis"],
+                        index=0,
+                        key="pv_tracking_type"
+                    )
+                    config['PV']['trackingtype'] = pv_tracking
+                
+                with col3:
+                    pv_optimal_angles = st.checkbox(
+                        "Auto-optimize Angles",
+                        value=config.get('PV', {}).get('optimal angles', False),
+                        key="pv_optimal_angles"
+                    )
+                    config['PV']['optimal angles'] = pv_optimal_angles
+                
+                # PV aging and weather data
+                col1, col2, col3 = st.columns(3)
+                with col1:
+                    pv_aging = st.checkbox(
+                        "Enable Aging Effects",
+                        value=config.get('PV', {}).get('ageing', False),
+                        key="pv_aging_enabled"
+                    )
+                    config['PV']['ageing'] = pv_aging
+                
+                with col2:
+                    pv_degradation = st.number_input(
+                        "Degradation Factor (%/year)",
+                        value=float(config.get('PV', {}).get('degradation factor', 0.5)),
+                        min_value=0.0,
+                        max_value=2.0,
+                        step=0.1,
+                        key="pv_degradation_factor"
+                    )
+                    config['PV']['degradation factor'] = pv_degradation
+                
+                with col3:
+                    pv_weather_source = st.selectbox(
+                        "Weather Data Source",
+                        ["TMY", "2023", "2022", "2021"],
+                        index=0,
+                        key="pv_weather_source"
+                    )
+                    config['PV']['serie'] = pv_weather_source
             
             # Battery Configuration
             with st.expander("🔋 Battery Storage Configuration", expanded=True):
@@ -633,32 +765,102 @@ def show_configuration():
                 with col1:
                     battery_capacity = st.number_input(
                         "Battery Capacity (MWh)",
-                        value=config.get('battery', {}).get('capacity', 20000) / 1000,
+                        value=float(config.get('battery', {}).get('capacity', 20000) / 1000),
                         min_value=1.0,
                         max_value=1000.0,
-                        step=1.0
+                        step=1.0,
+                        key="battery_capacity_mwh"
                     )
                     config['battery']['capacity'] = battery_capacity * 1000
                 
                 with col2:
                     battery_power = st.number_input(
                         "Battery Power (MW)",
-                        value=config.get('battery', {}).get('max power', 10000) / 1000,
+                        value=float(config.get('battery', {}).get('max power', 10000) / 1000),
                         min_value=1.0,
                         max_value=500.0,
-                        step=1.0
+                        step=1.0,
+                        key="battery_power_mw"
                     )
                     config['battery']['max power'] = battery_power * 1000
                 
                 with col3:
                     battery_efficiency = st.number_input(
                         "Battery Efficiency",
-                        value=config.get('battery', {}).get('efficiency', 0.9),
+                        value=float(config.get('battery', {}).get('efficiency', 0.9)),
                         min_value=0.5,
                         max_value=1.0,
-                        step=0.01
+                        step=0.01,
+                        key="battery_efficiency"
                     )
                     config['battery']['efficiency'] = battery_efficiency
+                
+                # Additional battery parameters
+                col1, col2, col3 = st.columns(3)
+                with col1:
+                    battery_charge_power = st.number_input(
+                        "Max Charge Power (MW)",
+                        value=float(config.get('battery', {}).get('max charging power', 10000) / 1000),
+                        min_value=1.0,
+                        max_value=500.0,
+                        step=1.0,
+                        key="battery_charge_power"
+                    )
+                    config['battery']['max charging power'] = battery_charge_power * 1000
+                
+                with col2:
+                    battery_discharge_power = st.number_input(
+                        "Max Discharge Power (MW)",
+                        value=float(config.get('battery', {}).get('max discharging power', 10000) / 1000),
+                        min_value=1.0,
+                        max_value=500.0,
+                        step=1.0,
+                        key="battery_discharge_power"
+                    )
+                    config['battery']['max discharging power'] = battery_discharge_power * 1000
+                
+                with col3:
+                    battery_dod = st.number_input(
+                        "Depth of Discharge (%)",
+                        value=float(config.get('battery', {}).get('depth of discharge', 90)),
+                        min_value=50.0,
+                        max_value=100.0,
+                        step=5.0,
+                        key="battery_dod"
+                    )
+                    config['battery']['depth of discharge'] = battery_dod
+                
+                # Battery aging and lifecycle
+                col1, col2, col3 = st.columns(3)
+                with col1:
+                    battery_aging = st.checkbox(
+                        "Enable Aging Effects",
+                        value=config.get('battery', {}).get('ageing', False),
+                        key="battery_aging_enabled"
+                    )
+                    config['battery']['ageing'] = battery_aging
+                
+                with col2:
+                    battery_cycles = st.number_input(
+                        "Cycle Life",
+                        value=float(config.get('battery', {}).get('life cycles', 4000)),
+                        min_value=1000.0,
+                        max_value=10000.0,
+                        step=100.0,
+                        key="battery_cycle_life"
+                    )
+                    config['battery']['life cycles'] = battery_cycles
+                
+                with col3:
+                    battery_end_life = st.number_input(
+                        "End-of-Life Capacity (%)",
+                        value=float(config.get('battery', {}).get('end life capacity', 80)),
+                        min_value=50.0,
+                        max_value=100.0,
+                        step=5.0,
+                        key="battery_end_life_capacity"
+                    )
+                    config['battery']['end life capacity'] = battery_end_life
             
             # Electrolyzer Configuration
             with st.expander("⚗️ Electrolyzer Configuration", expanded=True):
@@ -666,20 +868,22 @@ def show_configuration():
                 with col1:
                     electrolyzer_power = st.number_input(
                         "Electrolyzer Power (MW)",
-                        value=config.get('electrolyzer', {}).get('Npower', 25000) / 1000,
+                        value=float(config.get('electrolyzer', {}).get('Npower', 25000) / 1000),
                         min_value=1.0,
                         max_value=100.0,
-                        step=1.0
+                        step=1.0,
+                        key="electrolyzer_power_mw"
                     )
                     config['electrolyzer']['Npower'] = electrolyzer_power * 1000
                 
                 with col2:
                     electrolyzer_modules = st.number_input(
                         "Number of Modules",
-                        value=config.get('electrolyzer', {}).get('number of modules', 250),
-                        min_value=1,
-                        max_value=1000,
-                        step=10
+                        value=float(config.get('electrolyzer', {}).get('number of modules', 250)),
+                        min_value=1.0,
+                        max_value=1000.0,
+                        step=10.0,
+                        key="electrolyzer_modules"
                     )
                     config['electrolyzer']['number of modules'] = electrolyzer_modules
                 
@@ -687,32 +891,521 @@ def show_configuration():
                     electrolyzer_model = st.selectbox(
                         "Stack Model",
                         ["PEM General", "SOFC", "simple"],
-                        index=0
+                        index=0,
+                        key="electrolyzer_model"
                     )
                     config['electrolyzer']['stack model'] = electrolyzer_model
+                
+                # Additional electrolyzer parameters
+                col1, col2, col3 = st.columns(3)
+                with col1:
+                    electrolyzer_min_load = st.number_input(
+                        "Minimum Load (%)",
+                        value=float(config.get('electrolyzer', {}).get('minimum_load', 10)),
+                        min_value=0.0,
+                        max_value=50.0,
+                        step=5.0,
+                        key="electrolyzer_min_load"
+                    )
+                    config['electrolyzer']['minimum_load'] = electrolyzer_min_load
+                
+                with col2:
+                    electrolyzer_strategy = st.selectbox(
+                        "Operation Strategy",
+                        ["load_following", "baseload", "peak_shaving"],
+                        index=0,
+                        key="electrolyzer_strategy"
+                    )
+                    config['electrolyzer']['strategy'] = electrolyzer_strategy
+                
+                with col3:
+                    electrolyzer_renewables_only = st.checkbox(
+                        "Renewable-Only Operation",
+                        value=config.get('electrolyzer', {}).get('only_renewables', True),
+                        key="electrolyzer_renewables_only"
+                    )
+                    config['electrolyzer']['only_renewables'] = electrolyzer_renewables_only
+                
+                # Electrolyzer aging and efficiency
+                col1, col2, col3 = st.columns(3)
+                with col1:
+                    electrolyzer_aging = st.checkbox(
+                        "Enable Aging Effects",
+                        value=config.get('electrolyzer', {}).get('ageing', False),
+                        key="electrolyzer_aging_enabled"
+                    )
+                    config['electrolyzer']['ageing'] = electrolyzer_aging
+                
+                with col2:
+                    electrolyzer_efficiency = st.number_input(
+                        "System Efficiency (%)",
+                        value=float(config.get('electrolyzer', {}).get('efficiency', 75)),
+                        min_value=0.0,
+                        max_value=90.0,
+                        step=1.0,
+                        key="electrolyzer_efficiency"
+                    )
+                    config['electrolyzer']['efficiency'] = electrolyzer_efficiency
+                
+                with col3:
+                    electrolyzer_state = st.selectbox(
+                        "System State",
+                        ["on", "off", "standby"],
+                        index=0,
+                        key="electrolyzer_state"
+                    )
+                    config['electrolyzer']['state'] = electrolyzer_state
             
             # Hydrogen Storage Configuration
             with st.expander("💧 Hydrogen Storage Configuration", expanded=True):
-                col1, col2 = st.columns(2)
+                col1, col2, col3 = st.columns(3)
                 with col1:
                     h2_storage_capacity = st.number_input(
                         "Storage Capacity (kg)",
-                        value=config.get('hydrogen_storage', {}).get('max capacity', 5000),
-                        min_value=100,
-                        max_value=100000,
-                        step=100
+                        value=float(config.get('hydrogen_storage', {}).get('max capacity', 5000)),
+                        min_value=100.0,
+                        max_value=100000.0,
+                        step=100.0,
+                        key="h2_storage_capacity"
                     )
                     config['hydrogen_storage']['max capacity'] = h2_storage_capacity
                 
                 with col2:
                     h2_storage_pressure = st.number_input(
                         "Storage Pressure (bar)",
-                        value=config.get('hydrogen_storage', {}).get('pressure', 300),
-                        min_value=50,
-                        max_value=1000,
-                        step=10
+                        value=float(config.get('hydrogen_storage', {}).get('pressure', 300)),
+                        min_value=50.0,
+                        max_value=1000.0,
+                        step=10.0,
+                        key="h2_storage_pressure"
                     )
                     config['hydrogen_storage']['pressure'] = h2_storage_pressure
+                
+                with col3:
+                    h2_storage_owned = st.checkbox(
+                        "Owned Asset",
+                        value=config.get('hydrogen_storage', {}).get('owned', True),
+                        key="h2_storage_owned"
+                    )
+                    config['hydrogen_storage']['owned'] = h2_storage_owned
+                
+                # Additional hydrogen storage parameters
+                col1, col2, col3 = st.columns(3)
+                with col1:
+                    h2_storage_min_level = st.number_input(
+                        "Minimum Level (%)",
+                        value=float(config.get('hydrogen_storage', {}).get('min level', 10)),
+                        min_value=0.0,
+                        max_value=50.0,
+                        step=5.0,
+                        key="h2_storage_min_level"
+                    )
+                    config['hydrogen_storage']['min level'] = h2_storage_min_level
+                
+                with col2:
+                    h2_storage_max_level = st.number_input(
+                        "Maximum Level (%)",
+                        value=float(config.get('hydrogen_storage', {}).get('max level', 95)),
+                        min_value=50.0,
+                        max_value=100.0,
+                        step=5.0,
+                        key="h2_storage_max_level"
+                    )
+                    config['hydrogen_storage']['max level'] = h2_storage_max_level
+                
+                with col3:
+                    h2_storage_temperature = st.number_input(
+                        "Storage Temperature (K)",
+                        value=float(config.get('hydrogen_storage', {}).get('temperature', 298)),
+                        min_value=200.0,
+                        max_value=400.0,
+                        step=5.0,
+                        key="h2_storage_temperature"
+                    )
+                    config['hydrogen_storage']['temperature'] = h2_storage_temperature
+            
+            # Hydrogen Compressor Configuration
+            with st.expander("🔧 Hydrogen Compressor Configuration", expanded=True):
+                col1, col2, col3 = st.columns(3)
+                with col1:
+                    compressor_power = st.number_input(
+                        "Compressor Power (kW)",
+                        value=float(config.get('hydrogen_compressor', {}).get('Npower', 5000)),
+                        min_value=100.0,
+                        max_value=50000.0,
+                        step=100.0,
+                        key="compressor_power_kw"
+                    )
+                    config['hydrogen_compressor']['Npower'] = compressor_power
+                
+                with col2:
+                    compressor_model = st.selectbox(
+                        "Compressor Model",
+                        ["simple", "normal", "with_refrigeration"],
+                        index=1,
+                        key="compressor_model"
+                    )
+                    config['hydrogen_compressor']['compressor model'] = compressor_model
+                
+                with col3:
+                    compressor_stages = st.number_input(
+                        "Number of Stages",
+                        value=float(config.get('hydrogen_compressor', {}).get('n_stages', 3)),
+                        min_value=1.0,
+                        max_value=10.0,
+                        step=1.0,
+                        key="compressor_stages"
+                    )
+                    config['hydrogen_compressor']['n_stages'] = compressor_stages
+                
+                # Additional compressor parameters
+                col1, col2, col3 = st.columns(3)
+                with col1:
+                    compressor_p_in = st.number_input(
+                        "Input Pressure (bar)",
+                        value=float(config.get('hydrogen_compressor', {}).get('P_in', 30)),
+                        min_value=1.0,
+                        max_value=100.0,
+                        step=1.0,
+                        key="compressor_p_in"
+                    )
+                    config['hydrogen_compressor']['P_in'] = compressor_p_in
+                
+                with col2:
+                    compressor_p_out = st.number_input(
+                        "Output Pressure (bar)",
+                        value=float(config.get('hydrogen_compressor', {}).get('P_out', 700)),
+                        min_value=100.0,
+                        max_value=1000.0,
+                        step=10.0,
+                        key="compressor_p_out"
+                    )
+                    config['hydrogen_compressor']['P_out'] = compressor_p_out
+                
+                with col3:
+                    compressor_t_in = st.number_input(
+                        "Input Temperature (K)",
+                        value=float(config.get('hydrogen_compressor', {}).get('T_in', 298)),
+                        min_value=250.0,
+                        max_value=350.0,
+                        step=5.0,
+                        key="compressor_t_in"
+                    )
+                    config['hydrogen_compressor']['T_in'] = compressor_t_in
+                
+                # Compressor efficiency and operation
+                col1, col2, col3 = st.columns(3)
+                with col1:
+                    compressor_efficiency = st.number_input(
+                        "Compressor Efficiency (%)",
+                        value=float(config.get('hydrogen_compressor', {}).get('efficiency', 75)),
+                        min_value=50.0,
+                        max_value=90.0,
+                        step=1.0,
+                        key="compressor_efficiency"
+                    )
+                    config['hydrogen_compressor']['efficiency'] = compressor_efficiency
+                
+                with col2:
+                    compressor_renewables_only = st.checkbox(
+                        "Renewable-Only Operation",
+                        value=config.get('hydrogen_compressor', {}).get('only_renewables', True),
+                        key="compressor_renewables_only"
+                    )
+                    config['hydrogen_compressor']['only_renewables'] = compressor_renewables_only
+                
+                with col3:
+                    compressor_flow_rate = st.number_input(
+                        "Nominal Flow Rate (kg/h)",
+                        value=float(config.get('hydrogen_compressor', {}).get('flow_rate', 100)),
+                        min_value=10.0,
+                        max_value=1000.0,
+                        step=10.0,
+                        key="compressor_flow_rate"
+                    )
+                    config['hydrogen_compressor']['flow_rate'] = compressor_flow_rate
+            
+            # Ammonia Production Configuration
+            with st.expander("🏭 Ammonia Production Configuration", expanded=True):
+                col1, col2, col3 = st.columns(3)
+                with col1:
+                    ammonia_capacity = st.number_input(
+                        "Production Capacity (kg/h)",
+                        value=float(config.get('ammonia_production', {}).get('capacity', 1000)),
+                        min_value=100.0,
+                        max_value=10000.0,
+                        step=100.0,
+                        key="ammonia_capacity"
+                    )
+                    config['ammonia_production']['capacity'] = ammonia_capacity
+                
+                with col2:
+                    ammonia_efficiency = st.number_input(
+                        "Production Efficiency (%)",
+                        value=float(config.get('ammonia_production', {}).get('efficiency', 85)),
+                        min_value=50.0,
+                        max_value=95.0,
+                        step=1.0,
+                        key="ammonia_efficiency"
+                    )
+                    config['ammonia_production']['efficiency'] = ammonia_efficiency
+                
+                with col3:
+                    ammonia_owned = st.checkbox(
+                        "Owned Asset",
+                        value=config.get('ammonia_production', {}).get('owned', True),
+                        key="ammonia_owned"
+                    )
+                    config['ammonia_production']['owned'] = ammonia_owned
+                
+                # Additional ammonia production parameters
+                col1, col2, col3 = st.columns(3)
+                with col1:
+                    ammonia_h2_consumption = st.number_input(
+                        "H₂ Consumption (kg/h)",
+                        value=float(config.get('ammonia_production', {}).get('h2_consumption', 177)),
+                        min_value=50.0,
+                        max_value=500.0,
+                        step=5.0,
+                        key="ammonia_h2_consumption"
+                    )
+                    config['ammonia_production']['h2_consumption'] = ammonia_h2_consumption
+                
+                with col2:
+                    ammonia_n2_consumption = st.number_input(
+                        "N₂ Consumption (kg/h)",
+                        value=float(config.get('ammonia_production', {}).get('n2_consumption', 823)),
+                        min_value=200.0,
+                        max_value=2000.0,
+                        step=10.0,
+                        key="ammonia_n2_consumption"
+                    )
+                    config['ammonia_production']['n2_consumption'] = ammonia_n2_consumption
+                
+                with col3:
+                    ammonia_heat_consumption = st.number_input(
+                        "Heat Consumption (kW)",
+                        value=float(config.get('ammonia_production', {}).get('heat_consumption', 500)),
+                        min_value=100.0,
+                        max_value=2000.0,
+                        step=50.0,
+                        key="ammonia_heat_consumption"
+                    )
+                    config['ammonia_production']['heat_consumption'] = ammonia_heat_consumption
+                
+                # Ammonia operation parameters
+                col1, col2, col3 = st.columns(3)
+                with col1:
+                    ammonia_operation_hours = st.number_input(
+                        "Operation Hours (h/year)",
+                        value=float(config.get('ammonia_production', {}).get('operation_hours', 8000)),
+                        min_value=1000.0,
+                        max_value=8760.0,
+                        step=100.0,
+                        key="ammonia_operation_hours"
+                    )
+                    config['ammonia_production']['operation_hours'] = ammonia_operation_hours
+                
+                with col2:
+                    ammonia_startup_time = st.number_input(
+                        "Startup Time (hours)",
+                        value=float(config.get('ammonia_production', {}).get('startup_time', 24)),
+                        min_value=1.0,
+                        max_value=72.0,
+                        step=1.0,
+                        key="ammonia_startup_time"
+                    )
+                    config['ammonia_production']['startup_time'] = ammonia_startup_time
+                
+                with col3:
+                    ammonia_min_load = st.number_input(
+                        "Minimum Load (%)",
+                        value=float(config.get('ammonia_production', {}).get('min_load', 30)),
+                        min_value=10.0,
+                        max_value=80.0,
+                        step=5.0,
+                        key="ammonia_min_load"
+                    )
+                    config['ammonia_production']['min_load'] = ammonia_min_load
+            
+            # Heat Pump Configuration
+            with st.expander("🔥 Heat Pump Configuration", expanded=False):
+                col1, col2, col3 = st.columns(3)
+                with col1:
+                    heatpump_power = st.number_input(
+                        "Heat Pump Power (kW)",
+                        value=float(config.get('heat_pump', {}).get('nom Pth', 1000)),
+                        min_value=100.0,
+                        max_value=10000.0,
+                        step=100.0,
+                        key="heatpump_power"
+                    )
+                    config['heat_pump'] = config.get('heat_pump', {})
+                    config['heat_pump']['nom Pth'] = heatpump_power
+                
+                with col2:
+                    heatpump_type = st.selectbox(
+                        "Heat Pump Type",
+                        ["air_water", "water_water", "ground_water"],
+                        index=0,
+                        key="heatpump_type"
+                    )
+                    config['heat_pump']['type'] = heatpump_type
+                
+                with col3:
+                    heatpump_cop = st.number_input(
+                        "COP (Coefficient of Performance)",
+                        value=float(config.get('heat_pump', {}).get('COP', 3.5)),
+                        min_value=2.0,
+                        max_value=6.0,
+                        step=0.1,
+                        key="heatpump_cop"
+                    )
+                    config['heat_pump']['COP'] = heatpump_cop
+                
+                # Additional heat pump parameters
+                col1, col2, col3 = st.columns(3)
+                with col1:
+                    heatpump_temp_heat = st.number_input(
+                        "Heating Temperature (°C)",
+                        value=float(config.get('heat_pump', {}).get('t rad heat', 45)),
+                        min_value=30.0,
+                        max_value=80.0,
+                        step=5.0,
+                        key="heatpump_temp_heat"
+                    )
+                    config['heat_pump']['t rad heat'] = heatpump_temp_heat
+                
+                with col2:
+                    heatpump_temp_cool = st.number_input(
+                        "Cooling Temperature (°C)",
+                        value=float(config.get('heat_pump', {}).get('t rad cool', 7)),
+                        min_value=0.0,
+                        max_value=20.0,
+                        step=1.0,
+                        key="heatpump_temp_cool"
+                    )
+                    config['heat_pump']['t rad cool'] = heatpump_temp_cool
+                
+                with col3:
+                    heatpump_owned = st.checkbox(
+                        "Owned Asset",
+                        value=config.get('heat_pump', {}).get('owned', True),
+                        key="heatpump_owned"
+                    )
+                    config['heat_pump']['owned'] = heatpump_owned
+            
+            # CHP Configuration
+            with st.expander("⚡ CHP (Combined Heat & Power) Configuration", expanded=False):
+                col1, col2, col3 = st.columns(3)
+                with col1:
+                    chp_electrical_power = st.number_input(
+                        "Electrical Power (kW)",
+                        value=float(config.get('chp', {}).get('Ppeak', 2000)),
+                        min_value=100.0,
+                        max_value=10000.0,
+                        step=100.0,
+                        key="chp_electrical_power"
+                    )
+                    config['chp'] = config.get('chp', {})
+                    config['chp']['Ppeak'] = chp_electrical_power
+                
+                with col2:
+                    chp_thermal_power = st.number_input(
+                        "Thermal Power (kW)",
+                        value=float(config.get('chp', {}).get('Qpeak', 2500)),
+                        min_value=100.0,
+                        max_value=15000.0,
+                        step=100.0,
+                        key="chp_thermal_power"
+                    )
+                    config['chp']['Qpeak'] = chp_thermal_power
+                
+                with col3:
+                    chp_fuel_type = st.selectbox(
+                        "Fuel Type",
+                        ["natural_gas", "biogas", "hydrogen", "diesel"],
+                        index=0,
+                        key="chp_fuel_type"
+                    )
+                    config['chp']['fuel_type'] = chp_fuel_type
+                
+                # Additional CHP parameters
+                col1, col2, col3 = st.columns(3)
+                with col1:
+                    chp_electrical_efficiency = st.number_input(
+                        "Electrical Efficiency (%)",
+                        value=float(config.get('chp', {}).get('efficiency_el', 35)),
+                        min_value=20.0,
+                        max_value=50.0,
+                        step=1.0,
+                        key="chp_electrical_efficiency"
+                    )
+                    config['chp']['efficiency_el'] = chp_electrical_efficiency
+                
+                with col2:
+                    chp_thermal_efficiency = st.number_input(
+                        "Thermal Efficiency (%)",
+                        value=float(config.get('chp', {}).get('efficiency_th', 45)),
+                        min_value=30.0,
+                        max_value=60.0,
+                        step=1.0,
+                        key="chp_thermal_efficiency"
+                    )
+                    config['chp']['efficiency_th'] = chp_thermal_efficiency
+                
+                with col3:
+                    chp_owned = st.checkbox(
+                        "Owned Asset",
+                        value=config.get('chp', {}).get('owned', True),
+                        key="chp_owned"
+                    )
+                    config['chp']['owned'] = chp_owned
+            
+            # System-level configuration
+            st.divider()
+            st.subheader("🔧 System-Level Configuration")
+            
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                system_simulation_hours = st.number_input(
+                    "Simulation Hours",
+                    value=float(config.get('system', {}).get('simulation_hours', 8760)),
+                    min_value=1000.0,
+                    max_value=8760.0,
+                    step=100.0,
+                    key="system_simulation_hours"
+                )
+                config['system'] = config.get('system', {})
+                config['system']['simulation_hours'] = system_simulation_hours
+            
+            with col2:
+                system_time_step = st.selectbox(
+                    "Time Step",
+                    ["1min", "5min", "15min", "1hour"],
+                    index=0,
+                    key="system_time_step"
+                )
+                config['system']['time_step'] = system_time_step
+            
+            with col3:
+                system_optimization = st.checkbox(
+                    "Enable Optimization",
+                    value=config.get('system', {}).get('optimization', False),
+                    key="system_optimization"
+                )
+                config['system']['optimization'] = system_optimization
+            
+            # Save configuration button
+            st.divider()
+            col1, col2, col3 = st.columns([1, 2, 1])
+            with col2:
+                if st.button("💾 Save System Configuration", type="primary", use_container_width=True, key="save_system_config"):
+                    if save_config(studycase_config, "input_test_4/studycase.json"):
+                        st.success("✅ System configuration saved successfully!")
+                        st.info("💡 Configuration will be used in the next simulation run.")
+                    else:
+                        st.error("❌ Failed to save configuration.")
     
     with tab2:
         st.subheader("Technology Cost Configuration")
@@ -726,59 +1419,59 @@ def show_configuration():
             with col1:
                 pv_cost = st.number_input(
                     "Solar PV Cost (₹/kW)",
-                    value=tech_costs.get('PV', {}).get('cost per unit', 45000),
-                    min_value=10000,
-                    max_value=100000,
-                    step=1000
+                    value=float(tech_costs.get('PV', {}).get('cost per unit', 45000)),
+                    min_value=10000.0,
+                    max_value=100000.0,
+                    step=1000.0
                 )
                 
                 wind_cost = st.number_input(
                     "Wind Cost (₹/kW)",
-                    value=tech_costs.get('wind', {}).get('cost per unit', 65000),
-                    min_value=20000,
-                    max_value=150000,
-                    step=1000
+                    value=float(tech_costs.get('wind', {}).get('cost per unit', 65000)),
+                    min_value=20000.0,
+                    max_value=150000.0,
+                    step=1000.0
                 )
                 
                 battery_cost = st.number_input(
                     "Battery Cost (₹/kWh)",
-                    value=tech_costs.get('battery', {}).get('cost per unit', 75000),
-                    min_value=20000,
-                    max_value=200000,
-                    step=1000
+                    value=float(tech_costs.get('battery', {}).get('cost per unit', 75000)),
+                    min_value=20000.0,
+                    max_value=200000.0,
+                    step=1000.0
                 )
                 
                 electrolyzer_cost = st.number_input(
                     "Electrolyzer Cost (₹/kW)",
-                    value=tech_costs.get('electrolyzer', {}).get('cost per unit', 135000),
-                    min_value=50000,
-                    max_value=300000,
-                    step=5000
+                    value=float(tech_costs.get('electrolyzer', {}).get('cost per unit', 135000)),
+                    min_value=50000.0,
+                    max_value=300000.0,
+                    step=5000.0
                 )
             
             with col2:
                 compressor_cost = st.number_input(
                     "Hydrogen Compressor Cost (₹/kW)",
-                    value=tech_costs.get('hydrogen_compressor', {}).get('cost per unit', 35000),
-                    min_value=10000,
-                    max_value=100000,
-                    step=1000
+                    value=float(tech_costs.get('hydrogen_compressor', {}).get('cost per unit', 35000)),
+                    min_value=10000.0,
+                    max_value=100000.0,
+                    step=1000.0
                 )
                 
                 storage_cost = st.number_input(
                     "Hydrogen Storage Cost (₹/kW)",
-                    value=tech_costs.get('hydrogen_storage', {}).get('cost per unit', 60000),
-                    min_value=10000,
-                    max_value=150000,
-                    step=1000
+                    value=float(tech_costs.get('hydrogen_storage', {}).get('cost per unit', 60000)),
+                    min_value=10000.0,
+                    max_value=150000.0,
+                    step=1000.0
                 )
                 
                 ammonia_cost = st.number_input(
                     "Ammonia Production Cost (₹/kW)",
-                    value=tech_costs.get('ammonia_production', {}).get('cost per unit', 25000),
-                    min_value=5000,
-                    max_value=100000,
-                    step=1000
+                    value=float(tech_costs.get('ammonia_production', {}).get('cost per unit', 25000)),
+                    min_value=5000.0,
+                    max_value=100000.0,
+                    step=1000.0
                 )
             
             if st.form_submit_button("Update Costs"):
@@ -804,7 +1497,7 @@ def show_configuration():
             with col1:
                 electricity_purchase = st.number_input(
                     "Electricity Purchase Price (₹/kWh)",
-                    value=energy_market.get('electricity', {}).get('purchase', 0.12),
+                    value=float(energy_market.get('electricity', {}).get('purchase', 0.12)),
                     min_value=0.01,
                     max_value=1.0,
                     step=0.01
@@ -812,7 +1505,7 @@ def show_configuration():
                 
                 electricity_sale = st.number_input(
                     "Electricity Sale Price (₹/kWh)",
-                    value=energy_market.get('electricity', {}).get('sale', 0.08),
+                    value=float(energy_market.get('electricity', {}).get('sale', 0.08)),
                     min_value=0.01,
                     max_value=1.0,
                     step=0.01
@@ -820,7 +1513,7 @@ def show_configuration():
                 
                 hydrogen_purchase = st.number_input(
                     "Hydrogen Purchase Price (₹/kg)",
-                    value=energy_market.get('hydrogen', {}).get('purchase', 2.5),
+                    value=float(energy_market.get('hydrogen', {}).get('purchase', 2.5)),
                     min_value=0.1,
                     max_value=10.0,
                     step=0.1
@@ -828,7 +1521,7 @@ def show_configuration():
                 
                 hydrogen_sale = st.number_input(
                     "Hydrogen Sale Price (₹/kg)",
-                    value=energy_market.get('hydrogen', {}).get('sale', 2.0),
+                    value=float(energy_market.get('hydrogen', {}).get('sale', 2.0)),
                     min_value=0.1,
                     max_value=10.0,
                     step=0.1
@@ -837,7 +1530,7 @@ def show_configuration():
             with col2:
                 green_h2_incentive = st.number_input(
                     "Green Hydrogen Incentive (₹/kg)",
-                    value=energy_market.get('green_hydrogen_incentives', {}).get('value', 1.5),
+                    value=float(energy_market.get('green_hydrogen_incentives', {}).get('value', 1.5)),
                     min_value=0.0,
                     max_value=10.0,
                     step=0.1
@@ -845,7 +1538,7 @@ def show_configuration():
                 
                 ammonia_incentive = st.number_input(
                     "Ammonia Production Incentive (₹/kg)",
-                    value=energy_market.get('ammonia_incentives', {}).get('value', 0.05),
+                    value=float(energy_market.get('ammonia_incentives', {}).get('value', 0.05)),
                     min_value=0.0,
                     max_value=5.0,
                     step=0.01
@@ -853,7 +1546,7 @@ def show_configuration():
                 
                 interest_rate = st.number_input(
                     "Interest Rate (%)",
-                    value=energy_market.get('interest rate', 0.085) * 100,
+                    value=float(energy_market.get('interest rate', 0.085) * 100),
                     min_value=1.0,
                     max_value=20.0,
                     step=0.1
@@ -872,28 +1565,334 @@ def show_configuration():
                     st.success("Energy market parameters updated successfully!")
     
     with tab4:
-        st.subheader("Load Profile Information")
+        st.subheader("📊 Load Profile Management")
         st.info("""
-        Load profiles are stored as CSV files in the `input_test_4/loads/` directory.
-        The system currently uses the following load profiles:
-        - `electric_load_hybrid.csv` - Total electricity demand
-        - `heat_load_hybrid.csv` - Total heat demand  
-        - `hydrogen_demand_hybrid.csv` - Total hydrogen demand
-        - `ammonia_electric_load.csv` - Ammonia facility electricity demand
-        - `ammonia_heat_load.csv` - Ammonia facility heat demand
-        - `ammonia_hydrogen_load.csv` - Ammonia facility hydrogen demand
+        Load profiles define the energy demand patterns for the hybrid plant simulation.
+        Each profile contains time-series data with 1-minute resolution for a full year.
         """)
         
-        # Display load profile files
+        # Load profile files
         loads_dir = Path("input_test_4/loads")
         if loads_dir.exists():
             load_files = list(loads_dir.glob("*.csv"))
             if load_files:
-                st.write("**Available Load Profile Files:**")
-                for file in load_files:
-                    st.write(f"- {file.name}")
+                st.write("**📁 Available Load Profile Files:**")
+                
+                # Create tabs for different load types
+                load_tabs = st.tabs(["Electricity Loads", "Heat Loads", "Hydrogen Loads", "File Management"])
+                
+                with load_tabs[0]:
+                    st.write("**⚡ Electricity Load Profiles**")
+                    elec_files = [f for f in load_files if 'electric' in f.name.lower()]
+                    for file in elec_files:
+                        with st.expander(f"📄 {file.name}", expanded=False):
+                            try:
+                                df = pd.read_csv(file)
+                                
+                                # Show file info
+                                col1, col2, col3 = st.columns(3)
+                                with col1:
+                                    st.metric("Data Points", len(df))
+                                with col2:
+                                    st.metric("Columns", len(df.columns))
+                                with col3:
+                                    file_size = file.stat().st_size / 1024  # KB
+                                    st.metric("Size", f"{file_size:.1f} KB")
+                                
+                                # Show data preview
+                                st.write("**Data Preview (First 10 rows):**")
+                                st.dataframe(df.head(10), use_container_width=True)
+                                
+                                # Show statistics
+                                if 'electricity_demand' in df.columns:
+                                    col1, col2, col3, col4 = st.columns(4)
+                                    with col1:
+                                        st.metric("Max Demand (kW)", f"{df['electricity_demand'].max():.1f}")
+                                    with col2:
+                                        st.metric("Min Demand (kW)", f"{df['electricity_demand'].min():.1f}")
+                                    with col3:
+                                        st.metric("Avg Demand (kW)", f"{df['electricity_demand'].mean():.1f}")
+                                    with col4:
+                                        st.metric("Total Energy (MWh)", f"{df['electricity_demand'].sum()/1000:.1f}")
+                                
+                                # Download button
+                                with open(file, "rb") as f:
+                                    st.download_button(
+                                        label=f"📥 Download {file.name}",
+                                        data=f.read(),
+                                        file_name=file.name,
+                                        mime="text/csv",
+                                        key=f"download_elec_{file.stem}"
+                                    )
+                            except Exception as e:
+                                st.error(f"Error loading {file.name}: {str(e)}")
+                
+                with load_tabs[1]:
+                    st.write("**🔥 Heat Load Profiles**")
+                    heat_files = [f for f in load_files if 'heat' in f.name.lower()]
+                    for file in heat_files:
+                        with st.expander(f"📄 {file.name}", expanded=False):
+                            try:
+                                df = pd.read_csv(file)
+                                
+                                # Show file info
+                                col1, col2, col3 = st.columns(3)
+                                with col1:
+                                    st.metric("Data Points", len(df))
+                                with col2:
+                                    st.metric("Columns", len(df.columns))
+                                with col3:
+                                    file_size = file.stat().st_size / 1024  # KB
+                                    st.metric("Size", f"{file_size:.1f} KB")
+                                
+                                # Show data preview
+                                st.write("**Data Preview (First 10 rows):**")
+                                st.dataframe(df.head(10), use_container_width=True)
+                                
+                                # Show statistics
+                                if 'heat_demand' in df.columns:
+                                    col1, col2, col3, col4 = st.columns(4)
+                                    with col1:
+                                        st.metric("Max Demand (kW)", f"{df['heat_demand'].max():.1f}")
+                                    with col2:
+                                        st.metric("Min Demand (kW)", f"{df['heat_demand'].min():.1f}")
+                                    with col3:
+                                        st.metric("Avg Demand (kW)", f"{df['heat_demand'].mean():.1f}")
+                                    with col4:
+                                        st.metric("Total Energy (MWh)", f"{df['heat_demand'].sum()/1000:.1f}")
+                                
+                                # Download button
+                                with open(file, "rb") as f:
+                                    st.download_button(
+                                        label=f"📥 Download {file.name}",
+                                        data=f.read(),
+                                        file_name=file.name,
+                                        mime="text/csv",
+                                        key=f"download_heat_{file.stem}"
+                                    )
+                            except Exception as e:
+                                st.error(f"Error loading {file.name}: {str(e)}")
+                
+                with load_tabs[2]:
+                    st.write("**💧 Hydrogen Load Profiles**")
+                    h2_files = [f for f in load_files if 'hydrogen' in f.name.lower()]
+                    for file in h2_files:
+                        with st.expander(f"📄 {file.name}", expanded=False):
+                            try:
+                                df = pd.read_csv(file)
+                                
+                                # Show file info
+                                col1, col2, col3 = st.columns(3)
+                                with col1:
+                                    st.metric("Data Points", len(df))
+                                with col2:
+                                    st.metric("Columns", len(df.columns))
+                                with col3:
+                                    file_size = file.stat().st_size / 1024  # KB
+                                    st.metric("Size", f"{file_size:.1f} KB")
+                                
+                                # Show data preview
+                                st.write("**Data Preview (First 10 rows):**")
+                                st.dataframe(df.head(10), use_container_width=True)
+                                
+                                # Show statistics
+                                if 'hydrogen_demand' in df.columns:
+                                    col1, col2, col3, col4 = st.columns(4)
+                                    with col1:
+                                        st.metric("Max Demand (kg/h)", f"{df['hydrogen_demand'].max():.1f}")
+                                    with col2:
+                                        st.metric("Min Demand (kg/h)", f"{df['hydrogen_demand'].min():.1f}")
+                                    with col3:
+                                        st.metric("Avg Demand (kg/h)", f"{df['hydrogen_demand'].mean():.1f}")
+                                    with col4:
+                                        st.metric("Total Demand (tons)", f"{df['hydrogen_demand'].sum()/1000:.1f}")
+                                
+                                # Download button
+                                with open(file, "rb") as f:
+                                    st.download_button(
+                                        label=f"📥 Download {file.name}",
+                                        data=f.read(),
+                                        file_name=file.name,
+                                        mime="text/csv",
+                                        key=f"download_h2_{file.stem}"
+                                    )
+                            except Exception as e:
+                                st.error(f"Error loading {file.name}: {str(e)}")
+                
+                with load_tabs[3]:
+                    st.write("**📁 File Management**")
+                    
+                    # Summary table
+                    file_info = []
+                    for file in load_files:
+                        try:
+                            df = pd.read_csv(file)
+                            file_size = file.stat().st_size / 1024  # KB
+                            file_info.append({
+                                "File": file.name,
+                                "Type": "Electricity" if "electric" in file.name.lower() else 
+                                       "Heat" if "heat" in file.name.lower() else 
+                                       "Hydrogen" if "hydrogen" in file.name.lower() else "Other",
+                                "Data Points": len(df),
+                                "Columns": len(df.columns),
+                                "Size (KB)": f"{file_size:.1f}",
+                                "Last Modified": datetime.fromtimestamp(file.stat().st_mtime).strftime("%Y-%m-%d %H:%M")
+                            })
+                        except:
+                            file_info.append({
+                                "File": file.name,
+                                "Type": "Error",
+                                "Data Points": 0,
+                                "Columns": 0,
+                                "Size (KB)": "0.0",
+                                "Last Modified": "Unknown"
+                            })
+                    
+                    summary_df = pd.DataFrame(file_info)
+                    st.dataframe(summary_df, use_container_width=True)
+                    
+                    # Bulk download
+                    st.write("**📥 Bulk Download Options:**")
+                    col1, col2 = st.columns(2)
+                    
+                    with col1:
+                        if st.button("📥 Download All Load Files", key="download_all_loads"):
+                            st.info("Use individual download buttons in the tabs above to download specific files.")
+                    
+                    with col2:
+                        if st.button("🔄 Refresh Load Files", key="refresh_loads"):
+                            st.rerun()
             else:
                 st.warning("No load profile files found")
+        else:
+            st.warning("Load profiles directory not found")
+    
+    with tab5:
+        st.subheader("🔬 Technical Specifications")
+        st.info("""
+        This section provides detailed technical specifications for all available technology components,
+        based on the comprehensive technology analysis documentation.
+        """)
+        
+        # Technology overview
+        st.write("**📋 Available Technology Components**")
+        
+        tech_specs = {
+            "Solar PV": {
+                "Modeling": "Physics-based (PVGIS)",
+                "Energy Carrier": "Electricity",
+                "Key Parameters": ["peakP (kW)", "tilt (degrees)", "azimuth (degrees)", "losses (%)"],
+                "Capabilities": ["Real weather integration", "Performance degradation", "High temporal resolution"],
+                "Limitations": ["Fixed technology", "No shading effects", "Simplified degradation"]
+            },
+            "Wind Turbine": {
+                "Modeling": "Power curve/Betz theory",
+                "Energy Carrier": "Electricity",
+                "Key Parameters": ["Npower (kW)", "WScutin (m/s)", "WSrated (m/s)", "WSoff (m/s)"],
+                "Capabilities": ["Multiple modeling approaches", "Real wind data", "Load following"],
+                "Limitations": ["Fixed technology", "No wake effects", "Simplified control"]
+            },
+            "Battery Storage": {
+                "Modeling": "Electrochemical model",
+                "Energy Carrier": "Electricity",
+                "Key Parameters": ["capacity (kWh)", "max power (kW)", "efficiency", "SOC_min/max"],
+                "Capabilities": ["Aging effects", "State of charge tracking", "Efficiency modeling"],
+                "Limitations": ["Fixed chemistry", "Simplified aging", "No thermal effects"]
+            },
+            "Electrolyzer": {
+                "Modeling": "Detailed PEM/Alkaline",
+                "Energy Carrier": "H₂ + O₂",
+                "Key Parameters": ["Npower (kW)", "number of modules", "stack model", "efficiency"],
+                "Capabilities": ["Multiple technologies", "Modular design", "Chemical balance"],
+                "Limitations": ["Fixed chemistry", "No dynamic response", "Simplified aging"]
+            },
+            "Hydrogen Storage": {
+                "Modeling": "Thermodynamic model",
+                "Energy Carrier": "Hydrogen",
+                "Key Parameters": ["max capacity (kg)", "pressure (bar)", "owned"],
+                "Capabilities": ["Pressure modeling", "Level tracking", "Capacity management"],
+                "Limitations": ["Fixed technology", "No safety systems", "No leakage modeling"]
+            },
+            "Hydrogen Compressor": {
+                "Modeling": "Thermodynamic model",
+                "Energy Carrier": "Hydrogen",
+                "Key Parameters": ["Npower (kW)", "compressor model", "n_stages", "P_in/P_out"],
+                "Capabilities": ["Multi-stage compression", "Intercooling", "Efficiency modeling"],
+                "Limitations": ["Fixed technology", "No dynamic control", "Simplified heat transfer"]
+            },
+            "Heat Pump": {
+                "Modeling": "Detailed thermodynamic",
+                "Energy Carrier": "Heat/Cooling",
+                "Key Parameters": ["nom Pth (kW)", "type", "t rad heat/cool", "COP"],
+                "Capabilities": ["Temperature dependence", "Thermal storage", "Dual-mode operation"],
+                "Limitations": ["Limited types", "Fixed refrigerant", "No defrosting"]
+            },
+            "CHP Systems": {
+                "Modeling": "Performance maps",
+                "Energy Carrier": "Electricity + Heat",
+                "Key Parameters": ["Ppeak (kW)", "Qpeak (kW)", "efficiency_el/th", "fuel_type"],
+                "Capabilities": ["Performance maps", "Multiple fuels", "Load following"],
+                "Limitations": ["Fixed technology", "No start-up modeling", "Simplified control"]
+            }
+        }
+        
+        # Create expandable sections for each technology
+        for tech_name, specs in tech_specs.items():
+            with st.expander(f"🔧 {tech_name}", expanded=False):
+                col1, col2 = st.columns(2)
+                
+                with col1:
+                    st.write("**📊 Specifications:**")
+                    st.write(f"**Modeling Approach:** {specs['Modeling']}")
+                    st.write(f"**Energy Carrier:** {specs['Energy Carrier']}")
+                    
+                    st.write("**🔑 Key Parameters:**")
+                    for param in specs['Key Parameters']:
+                        st.write(f"• {param}")
+                
+                with col2:
+                    st.write("**✅ Capabilities:**")
+                    for capability in specs['Capabilities']:
+                        st.write(f"• {capability}")
+                    
+                    st.write("**⚠️ Limitations:**")
+                    for limitation in specs['Limitations']:
+                        st.write(f"• {limitation}")
+        
+        # Simulation capabilities summary
+        st.divider()
+        st.write("**🎯 Simulation Capabilities Summary**")
+        
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            st.write("**✅ What the Simulation CAN Do:**")
+            st.write("• Multi-energy systems integration")
+            st.write("• High temporal resolution (sub-hourly)")
+            st.write("• Real weather data integration")
+            st.write("• Detailed component modeling")
+            st.write("• Performance degradation")
+            st.write("• Economic analysis")
+            st.write("• Storage optimization")
+            st.write("• Grid integration")
+        
+        with col2:
+            st.write("**⚠️ What the Simulation CANNOT Do:**")
+            st.write("• Real-time control")
+            st.write("• Day-ahead optimization")
+            st.write("• Grid stability analysis")
+            st.write("• Component failure modeling")
+            st.write("• Maintenance scheduling")
+            st.write("• Environmental impact")
+            st.write("• Dynamic market response")
+            st.write("• Advanced control strategies")
+        
+        # Technical documentation link
+        st.divider()
+        st.write("**📚 For detailed technical specifications, refer to:**")
+        st.write("• Technology Components Analysis documentation")
+        st.write("• Individual component source code in `techs/` directory")
+        st.write("• Component-specific parameter descriptions")
 
 def show_simulation():
     """Show simulation page"""
@@ -946,7 +1945,7 @@ def show_simulation():
     with col2:
         st.subheader("Run Simulation")
         
-        if st.button("🚀 Start Simulation", type="primary", use_container_width=True):
+        if st.button("🚀 Start Simulation", type="primary", use_container_width=True, key="start_simulation"):
             with st.spinner("Running simulation..."):
                 success, stdout, stderr = run_simulation()
                 
