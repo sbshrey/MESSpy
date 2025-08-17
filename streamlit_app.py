@@ -14,7 +14,7 @@ matplotlib.use('Agg')
 
 # Set page config
 st.set_page_config(
-    page_title="Hybrid Plant Simulation Dashboard",
+    page_title="MESS - Multi-Energy System Simulator Platform",
     page_icon="⚡",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -42,6 +42,7 @@ st.markdown("""
         border: 1px solid #e0e0e0;
         margin-bottom: 1rem;
     }
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -252,7 +253,6 @@ def display_csv_outputs():
         st.warning("No outputs directory found. Please run the simulation first.")
         return
     
-    st.subheader("📊 CSV Output Files")
     st.write("View and download all generated CSV files:")
     
     # Create tabs for different output categories
@@ -395,7 +395,6 @@ def display_output_summary():
         st.warning("No outputs directory found. Please run the simulation first.")
         return
     
-    st.subheader("📊 Output Summary")
     
     # Count files in each directory
     summary_data = []
@@ -455,7 +454,19 @@ def display_output_summary():
 
 def main():
     # Header
-    st.markdown('<h1 class="main-header">⚡ Hybrid Plant Simulation Dashboard</h1>', unsafe_allow_html=True)
+    st.markdown('<h1 class="main-header">⚡ MESS - Multi-Energy System Simulator Platform</h1>', unsafe_allow_html=True)
+    
+    # Determine current page first
+    if st.session_state.get('current_page', None) == "Results":
+        # Clear the session state
+        st.session_state.current_page = None
+        # Set the page to Results
+        page = "Results"
+    else:
+        # Use session state to track current page
+        if 'current_page' not in st.session_state:
+            st.session_state.current_page = "Overview"
+        page = st.session_state.current_page
     
     # Sidebar
     st.sidebar.title("Navigation")
@@ -469,24 +480,50 @@ def main():
     else:
         st.sidebar.warning("⚠️ No Outputs Found")
     
-    page = st.sidebar.selectbox(
-        "Choose a page:",
-        ["Overview", "Configuration", "Simulation", "Results", "Documentation", "Output Files"],
-        key="main_navigation"
-    )
+    # Navigation buttons
+    st.sidebar.markdown("---")
+    
+    # Create navigation buttons with modern styling
+    nav_buttons = [
+        ("🏠 Overview", "Overview"),
+        ("⚙️ Configuration", "Configuration"),
+        ("📊 Results", "Results"),
+        ("📚 Documentation", "Documentation")
+    ]
+    
+    for button_text, button_page in nav_buttons:
+        # Determine if this is the active page
+        is_active = page == button_page
+        
+        # Use different button types for active vs inactive
+        if is_active:
+            # Active page - use primary button style
+            if st.sidebar.button(
+                f"**{button_text}**", 
+                type="primary",
+                use_container_width=True, 
+                key=f"nav_{button_page.lower()}"
+            ):
+                st.session_state.current_page = button_page
+                st.rerun()
+        else:
+            # Inactive page - use secondary button style
+            if st.sidebar.button(
+                button_text, 
+                use_container_width=True, 
+                key=f"nav_{button_page.lower()}"
+            ):
+                st.session_state.current_page = button_page
+                st.rerun()
     
     if page == "Overview":
         show_overview()
     elif page == "Configuration":
         show_configuration()
-    elif page == "Simulation":
-        show_simulation()
     elif page == "Results":
         show_results()
     elif page == "Documentation":
         show_documentation()
-    elif page == "Output Files":
-        show_output_files()
 
 def show_overview():
     """Show overview page"""
@@ -515,6 +552,11 @@ def show_overview():
         - **Hydrogen Infrastructure**: Electrolyzer (25 MW), Compressor, Storage
         - **End Use**: Ammonia Production Facility
         - **Grid Integration**: Bidirectional electricity and hydrogen exchange
+        
+        ### Quick Start
+        1. **Configure** system parameters in Configuration tab
+        2. **Run Simulation** using the button in top right
+        3. **View Results** in the Results tab
         """)
     
     # Load current configuration for metrics
@@ -542,7 +584,70 @@ def show_overview():
 
 def show_configuration():
     """Show configuration page"""
-    st.header("⚙️ Configuration Management")
+    # Create header with simulation button in top right
+    col1, col2 = st.columns([3, 1])
+    
+    with col1:
+        st.header("⚙️ Configuration Management")
+    
+    with col2:
+        st.write("")  # Add some spacing
+        st.write("")  # Add some spacing
+        
+        # Check if simulation was just completed
+        simulation_completed = st.session_state.get('simulation_completed', False)
+        
+        if simulation_completed:
+            # Show completion status instead of run button
+            st.success("✅ Simulation Completed!")
+            st.metric("Status", "Ready")
+            
+            # Show quick results summary
+            st.subheader("📊 Quick Results")
+            
+            # Check for generated plots
+            plots_dir = Path("input_test_4/plots")
+            if plots_dir.exists():
+                plot_files = list(plots_dir.glob("*.png"))
+                if plot_files:
+                    st.success(f"Generated {len(plot_files)} plot files")
+                    
+                    # Show key metrics
+                    col1, col2 = st.columns(2)
+                    with col1:
+                        st.metric("Plots Generated", len(plot_files))
+                    with col2:
+                        st.metric("Status", "✅ Complete")
+                    
+                    # Add buttons for next actions
+                    col1, col2 = st.columns(2)
+                    with col1:
+                        if st.button("📊 View Full Results", type="primary", key="view_results_after_sim"):
+                            # Set session state to trigger navigation
+                            st.session_state.current_page = "Results"
+                            st.rerun()
+                    with col2:
+                        if st.button("🔄 Run Again", type="secondary", key="run_simulation_again"):
+                            st.session_state.simulation_completed = False
+                            st.rerun()
+                else:
+                    st.warning("No plot files generated")
+            else:
+                st.warning("No plots directory found")
+        else:
+            # Show run simulation button
+            if st.button("🚀 Run Simulation", type="primary", use_container_width=True, key="run_simulation_config"):
+                with st.spinner("Running simulation..."):
+                    success, stdout, stderr = run_simulation()
+                    
+                    if success:
+                        st.session_state.simulation_completed = True
+                        st.success("✅ Simulation completed successfully!")
+                        st.rerun()
+                    else:
+                        st.error("❌ Simulation failed!")
+                        with st.expander("Error Details", expanded=True):
+                            st.text(stderr)
     
     # Load configurations
     studycase_config = load_config("input_test_4/studycase.json")
@@ -552,6 +657,32 @@ def show_configuration():
     if not all([studycase_config, tech_costs, energy_market]):
         st.error("Failed to load configuration files")
         return
+    
+    # Show quick configuration status (only if simulation not completed)
+    if not st.session_state.get('simulation_completed', False):
+        st.info("💡 **Quick Tip**: Configure your system parameters below, then click 'Run Simulation' in the top right to execute the simulation.")
+    else:
+        st.success("🎉 **Simulation Complete!** Your results are ready. Click 'View Full Results' in the top right to see detailed analysis.")
+    
+    # Show current configuration summary
+    if studycase_config and 'hybrid_plant' in studycase_config:
+        config = studycase_config['hybrid_plant']
+        
+        col1, col2, col3, col4 = st.columns(4)
+        with col1:
+            wind_capacity = config.get('wind', {}).get('Npower', 0) / 1000
+            st.metric("Wind Power", f"{wind_capacity:.1f} MW")
+        with col2:
+            pv_capacity = config.get('PV', {}).get('peakP', 0) / 1000
+            st.metric("Solar PV", f"{pv_capacity:.1f} MW")
+        with col3:
+            battery_capacity = config.get('battery', {}).get('capacity', 0) / 1000
+            st.metric("Battery Storage", f"{battery_capacity:.1f} MWh")
+        with col4:
+            electrolyzer_capacity = config.get('electrolyzer', {}).get('Npower', 0) / 1000
+            st.metric("Electrolyzer", f"{electrolyzer_capacity:.1f} MW")
+    
+    st.divider()
     
     # Tabs for different configuration sections
     tab1, tab2, tab3, tab4, tab5 = st.tabs(["System Components", "Technology Costs", "Energy Market", "Load Profiles", "Technical Specifications"])
@@ -1894,83 +2025,7 @@ def show_configuration():
         st.write("• Individual component source code in `techs/` directory")
         st.write("• Component-specific parameter descriptions")
 
-def show_simulation():
-    """Show simulation page"""
-    st.header("🚀 Run Simulation")
-    
-    st.markdown("""
-    ### Simulation Overview
-    The hybrid plant simulation analyzes the energy flows, economics, and performance 
-    of the integrated renewable energy and hydrogen production system.
-    """)
-    
-    # Simulation controls
-    col1, col2 = st.columns([2, 1])
-    
-    with col1:
-        st.subheader("Simulation Parameters")
-        
-        # Check if configuration files exist
-        config_files = [
-            "input_test_4/studycase.json",
-            "input_test_4/tech_cost.json", 
-            "input_test_4/energy_market.json"
-        ]
-        
-        missing_files = [f for f in config_files if not os.path.exists(f)]
-        if missing_files:
-            st.error(f"Missing configuration files: {', '.join(missing_files)}")
-            return
-        
-        st.success("✅ All configuration files are present")
-        
-        # Load current configuration for display
-        studycase_config = load_config("input_test_4/studycase.json")
-        if studycase_config and 'hybrid_plant' in studycase_config:
-            config = studycase_config['hybrid_plant']
-            
-            col1, col2, col3 = st.columns(3)
-            with col1:
-                st.metric("Wind Power", f"{config.get('wind', {}).get('Npower', 0)/1000:.1f} MW")
-                st.metric("Solar PV", f"{config.get('PV', {}).get('peakP', 0)/1000:.1f} MW")
-            
-            with col2:
-                st.metric("Battery Storage", f"{config.get('battery', {}).get('capacity', 0)/1000:.1f} MWh")
-                st.metric("Electrolyzer", f"{config.get('electrolyzer', {}).get('Npower', 0)/1000:.1f} MW")
-            
-            with col3:
-                st.metric("H2 Storage", f"{config.get('hydrogen_storage', {}).get('max capacity', 0):.0f} kg")
-                st.metric("Peak Demand", "33 MW")
-    
-    with col2:
-        st.subheader("Run Simulation")
-        
-        if st.button("🚀 Start Simulation", type="primary", use_container_width=True, key="start_simulation"):
-            with st.spinner("Running simulation..."):
-                success, stdout, stderr = run_simulation()
-                
-                if success:
-                    st.success("✅ Simulation completed successfully!")
-                    
-                    # Display simulation output
-                    with st.expander("Simulation Output", expanded=False):
-                        st.text(stdout)
-                    
-                    # Show quick results
-                    st.subheader("📊 Quick Results")
-                    
-                    # Check for generated plots
-                    plots_dir = Path("input_test_4/plots")
-                    if plots_dir.exists():
-                        plot_files = list(plots_dir.glob("*.png"))
-                        if plot_files:
-                            st.success(f"Generated {len(plot_files)} plot files")
-                        else:
-                            st.warning("No plot files generated")
-                else:
-                    st.error("❌ Simulation failed!")
-                    with st.expander("Error Details", expanded=True):
-                        st.text(stderr)
+
 
 def show_results():
     """Show results page"""
@@ -1984,7 +2039,7 @@ def show_results():
     
     # Results tabs
     tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8, tab9 = st.tabs([
-        "Output Summary", "CSV Files", "Energy Flow", "System Summary", "Economic Analysis", "Load Profiles", "Production Profiles", "PDF Report", "Image Gallery"
+        "Output Summary", "CSV Output Files", "Energy Flow", "System Summary", "Economic Analysis", "Load Profiles", "Production Profiles", "PDF Report", "Image Gallery"
     ])
     
     with tab1:
@@ -1992,7 +2047,7 @@ def show_results():
         display_output_summary()
     
     with tab2:
-        st.subheader("📄 CSV Output Files")
+        st.subheader("📊 CSV Output Files")
         display_csv_outputs()
     
     with tab3:
@@ -2440,54 +2495,7 @@ def show_documentation():
             - Basic grid integration
             """)
 
-def show_output_files():
-    """Show output files page"""
-    st.header("📊 Output Files Viewer")
-    
-    st.markdown("""
-    ### Comprehensive Output Analysis
-    
-    This page provides direct access to all generated CSV files from the simulation.
-    You can view, analyze, and download all output data in one place.
-    """)
-    
-    # Check if outputs exist
-    outputs_dir = Path("input_test_4/outputs")
-    if not outputs_dir.exists():
-        st.warning("⚠️ No output files found. Please run the simulation first to generate outputs.")
-        st.info("💡 **To generate outputs:** Go to the Simulation page and click 'Start Simulation'")
-        return
-    
-    # Display output summary
-    display_output_summary()
-    
-    st.divider()
-    
-    # Display all CSV files
-    display_csv_outputs()
-    
-    # Additional features
-    st.divider()
-    st.subheader("🔧 Advanced Features")
-    
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        st.markdown("""
-        **📈 Data Analysis Tips:**
-        - Use the expandable sections to view detailed data
-        - Download CSV files for external analysis
-        - Check reconciliation reports for data quality
-        - Review recommendations for improvements
-        """)
-    
-    with col2:
-        st.markdown("""
-        **💾 File Categories:**
-        - **Intermediate**: Raw data processing
-        - **Final**: Processed results and analysis
-        - **Reconciliation**: Data validation reports
-        """)
+
 
 if __name__ == "__main__":
     main()
