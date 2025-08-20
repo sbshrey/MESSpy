@@ -12,6 +12,8 @@ import matplotlib.pyplot as plt
 import matplotlib
 matplotlib.use('Agg')
 from datetime import datetime
+import io
+import zipfile
 
 # Set page config
 st.set_page_config(
@@ -433,8 +435,28 @@ def display_output_summary():
             st.rerun()
     
     with col2:
-        if st.button("📥 Download All CSV Files", key="download_all_csv"):
-            st.info("Use individual download buttons in the tabs above to download specific files.")
+        # Prepare a zip archive of all CSVs with folder structure preserved
+        try:
+            csv_files_all = list(outputs_dir.rglob("*.csv"))
+            if csv_files_all:
+                zip_buffer = io.BytesIO()
+                with zipfile.ZipFile(zip_buffer, mode="w", compression=zipfile.ZIP_DEFLATED) as zipf:
+                    for csv_path in csv_files_all:
+                        arcname = csv_path.relative_to(outputs_dir)
+                        zipf.write(str(csv_path), arcname=str(arcname))
+                zip_buffer.seek(0)
+                st.download_button(
+                    label="📥 Download All CSV Files",
+                    data=zip_buffer.getvalue(),
+                    file_name="outputs_csv_archive.zip",
+                    mime="application/zip",
+                    key="download_all_csv"
+                )
+                st.info("Use individual download buttons in the tabs above to download specific files.")
+            else:
+                st.info("No CSV files found to download.")
+        except Exception as e:
+            st.error(f"Failed to prepare CSV archive: {e}")
     
     with col3:
         if st.button("📊 View Data Quality", key="view_quality"):
