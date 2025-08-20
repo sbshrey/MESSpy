@@ -11,6 +11,7 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import matplotlib
 matplotlib.use('Agg')
+from datetime import datetime
 
 # Set page config
 st.set_page_config(
@@ -456,17 +457,10 @@ def main():
     # Header
     st.markdown('<h1 class="main-header">⚡ MESS - Multi-Energy System Simulator Platform</h1>', unsafe_allow_html=True)
     
-    # Determine current page first
-    if st.session_state.get('current_page', None) == "Results":
-        # Clear the session state
-        st.session_state.current_page = None
-        # Set the page to Results
-        page = "Results"
-    else:
-        # Use session state to track current page
-        if 'current_page' not in st.session_state:
-            st.session_state.current_page = "Overview"
-        page = st.session_state.current_page
+    # Determine current page first (do not clear navigation state on reruns)
+    if 'current_page' not in st.session_state or not st.session_state.current_page:
+        st.session_state.current_page = "Overview"
+    page = st.session_state.current_page
     
     # Sidebar
     st.sidebar.title("Navigation")
